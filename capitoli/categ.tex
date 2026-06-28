@@ -1,0 +1,125 @@
+\chapter{Teoria delle categorie}
+Tutto lo studio delle coalgebre nasce dai concetti fondamentali della teoria delle categorie, il cui oggetto fondamentale è dato dalle categorie.
+
+\begin{definition}[Categoria]
+  Una \textbf{categoria} \(\mathcal{C}\) consiste dei seguenti dati:
+  \begin{itemize}
+    \item una collezione di oggetti \(\Ob(\mathcal{C})\). Si usa la notazione \(X\in\mathcal{C}\) per indicare \(X\in\Ob(\mathcal{C})\).
+
+    \item una collezione di morfismi \(\Mor(\mathcal{C})\). Ad ogni morfismo di \(\mathcal{C}\), che viene indicato come \(f:X\to Y\) o come \(X \xrightarrow{f} Y\), sono associati un oggetto dominio \(X\in\mathcal{C}\) e un oggetto codominio \(Y\in\mathcal{C}\). La collezione di morfismi che hanno dominio \(X\) e codominio \(Y\) si indica con \(\Hom_{\mathcal{C}}(X, Y)\) oppure, se la categoria di riferimento è implicita, con \(\Hom(X, Y)\).
+  \end{itemize}
+
+  Per ogni coppia di morfismi \(X \xrightarrow{f} Y\) e \(Y \xrightarrow{g} Z\) è definita un'operazione di \textit{composizione di morfismi}, indicata come \(g \circ f : X \to Z\) o semplicemente \(gf : X \to Z\), che soddisfa due condizioni:
+  \begin{description}[font=\normalfont]
+    \item[1. Associatività:] Dati tre morfismi \(W \xrightarrow{f} X\), \(X \xrightarrow{g} Y\), \(Y \xrightarrow{h} Z\), la loro composizione è associativa, cioè \(h \circ \left( g \circ f\right) = \left( h \circ g\right) \circ f\), e può essere indicata più semplicemente come \(h \circ g \circ f\) o \(hgf\).
+    \item[2. Morfismo identità:] Per ogni oggetto \(X \in \mathcal{C}\), esiste un \textit{morfismo identità}, indicato con \(\id_X : X \to X\), che è un elemento neutro per la composizione: dato \(f : X \to Y\), si ha che \(f \circ \id_X = f = \id_Y \circ f\).
+  \end{description}
+
+  Una categoria si dice \textit{piccola} se \(\Ob(\mathcal{C})\) è un insieme, altrimenti si dice \textit{grande}. Se \(\Hom_{\mathcal{C}}(X, Y)\) è un insieme per qualunque coppia di oggetti \(X, Y\), allora la categoria si dice \textit{localmente piccola}.
+\end{definition}
+
+L'esempio più immediato di categoria, e l'unica categoria esplorata più avanti, è la categoria degli insiemi.
+
+\begin{example}
+  La categoria degli insiemi \(\Set\) ha come oggetti gli insiemi e le funzioni tra gli insiemi come morfismi. Dato che la collezione degli insiemi non è essa stessa un insieme, questa categoria non è piccola, ma, essendo \(\Hom_{\Set}(X, Y)\) l'insieme delle funzioni da \(X\) a \(Y\), è localmente piccola. La composizione di morfismi è data dalla composizione di funzioni \(g \circ f\) e il morfismo identità \(\id_X\) è la funzione identità sull'insieme \(X\).
+\end{example}
+
+Le proprietà categoriche sono espresse in termini di morfismi, spesso rappresentati tramite diagrammi. Due aspetti fondamentali in questo senso sono la commutatività e l'unicità:
+\begin{description}
+  \item[Commutatività:] Equazioni del tipo \(f_n \circ f_{n-1} \circ \cdots \circ f_2 \circ f_1 = g_m \circ g_{m-1} \circ \cdots \circ g_2 \circ g_1\) sono rappresentate da diagrammi come il seguente.
+
+    \[\begin{tikzcd}
+      & X_1 \arrow[r, "f_2"] & \cdots \arrow[r, "f_{n-1}"] & X_{n-1} \arrow[dr, "f_n"] & \\
+      A \arrow[ur, "f_1"] \arrow[dr, "g_1"'] & & & & B \\
+      & Y_1 \arrow[r, "g_2"'] & \cdots \arrow[r, "g_{m-1}"'] & Y_{m-1} \arrow[ur, "g_m"'] &
+    \end{tikzcd}\]
+  
+  \item[Unicità: ] Una formulazione comune in teoria delle categorie è: per ogni elemento esiste un unico morfismo \(f: X \to Y\) che soddisfa una certa proprietà. Un morfismo di questo tipo è indicato nei diagrammi come \(f: X \dashrightarrow Y\).
+\end{description}
+
+Un concetto derivato immediatamente dalla struttura categorica è quello di isomorfismo.
+
+\begin{definition}[Isomorfismo]
+  Un morfismo \(f: X \to Y\) in una categoria \(\mathcal{C}\) è un \textbf{isomorfismo} se esiste un morfismo \(g: Y \to X\) tale che \(g \circ f = \id_X\) e \(f \circ g = \id_Y\). In tal caso \(g\) è unico ed è detto \textit{inverso} di \(f\), scritto \(f^{-1}\), e si dice che \(X\) e \(Y\) sono \textit{isomorfi}, scritto \(X \cong Y\).
+\end{definition}
+
+Nella categoria \(\Set\) gli isomorfismi sono esattamente le funzioni biunivoche. La nozione di isomorfismo è fondamentale in tutta la teoria delle categorie e nel contesto delle coalgebre: la coalgebra finale è unica a meno di isomorfismo, e la sua struttura di transizione è essa stessa un isomorfismo.
+
+Un altro oggetto della teoria delle categorie fondamentale per lo studio delle coalgebre è dato dai funtori.
+
+\begin{definition}[Funtore]
+  Date due categorie \(\mathcal{C}\) e \(\mathcal{D}\), un \textbf{funtore} \(F: \mathcal{C} \to \mathcal{D}\) consiste di due corrispondenze \(\Ob(\mathcal{C}) \to \Ob(\mathcal{D})\) e \(\Mor(\mathcal{C}) \to \Mor(\mathcal{D})\), indicate entrambe con \(F\), tali che:
+  \begin{enumerate}
+    \item \(F\) rispetta domini e codomini: data \(f: X \to Y\) in \(\mathcal{C}\), allora \(F(f): F(X) \to F(Y)\) in \(\mathcal{D}\).
+    \item \(F\) rispetta le identità: \(F(\id_X) =  \id_{F(X)}\) per ogni \(X \in \mathcal{C}\).
+    \item \(F\) rispetta le composizioni: \(F(g \circ f) = F(g) \circ F(f)\) per ogni morfismo \(f: X \to Y\) e \(g: Y \to Z\).
+  \end{enumerate}
+\end{definition}
+
+Per ogni categoria \(\mathcal{C}\), è definito un \textit{funtore identità} \(\id_{\mathcal{C}}: \mathcal{C} \to \mathcal{C}\), che associa \(X \mapsto X\) e \(f \mapsto f\). Dato un oggetto \(A \in \mathcal{C}\), si definisce un \textit{funtore costante} \(\underbar{A}: \mathcal{D} \to \mathcal{C}\), per una categoria arbitraria \(\mathcal{D}\). Questo funtore associa ad ogni \(X \in D\) l'oggetto \(A\) e ad ogni morfismo \(f \in \Mor(\mathcal{D})\) il morfismo \(\id_A\).
+
+Inoltre, dati due funtori \(F: \mathcal{C} \to \mathcal{D}\) e \(G: \mathcal{D} \to \mathcal{E}\), esiste un \textit{funtore composto} \(G \circ F: \mathcal{C} \to \mathcal{E}\), che può anche essere indicato semplicemente come \(GF\).
+
+Un tipo di funtori particolarmente importante per lo studio delle coalgebre è dato dagli \textit{endofuntori}, cioè funtori \(F: \mathcal{C} \to \mathcal{C}\), che permettono di dare una definizione formale di coalgebra.
+
+Infine, una nozione categorica centrale nello studio delle coalgebre è quella di oggetto finale.
+
+\begin{definition}[Oggetto finale]
+  Un \textbf{oggetto finale} in una categoria \(\mathcal{C}\) è un oggetto \(\mathbf{1} \in \mathcal{C}\) tale che per ogni oggetto \(X \in \mathcal{C}\) esiste un unico morfismo \(!_X : X \to \mathbf{1}\).
+\end{definition}
+
+% Una proprietà importante degli oggetti finali è che sono unici a meno di un isomorfismo unico.
+% \begin{proposition}
+%   Se \(\mathbf{1}\) e \(\mathbf{1'}\) sono oggetti finali in una categoria \(\mathcal{C}\), allora esiste un isomorfismo unico \(!: \mathbf{1} \to \mathbf{1'}\) tra essi. 
+% \end{proposition}
+% \begin{proof}
+%   Per la proprietà di oggetto finale, esistono morfismi unici \(!_{\mathbf{1}}: \mathbf{1} \to \mathbf{1'}\) e \(!_{\mathbf{1'}}: \mathbf{1'} \to \mathbf{1}\), che rendono il seguente diagramma commutativo
+
+%   \[\begin{tikzcd}
+%     {\mathbf{1}} && {\mathbf{1'}} && {\mathbf{1}} \\
+%     \\
+%     && {\mathbf{1}} && {\mathbf{1'}}
+%     \arrow["{!_{\mathbf{1}}}", from=1-1, to=1-3]
+%     \arrow["{\id_{\mathbf{1}}}"', from=1-1, to=3-3]
+%     \arrow["{!_{\mathbf{1'}}}", from=1-3, to=1-5]
+%     \arrow["{!_{\mathbf{1'}}}", from=1-3, to=3-3]
+%     \arrow["{\id_{\mathbf{1'}}}", from=1-3, to=3-5]
+%     \arrow["{!_{\mathbf{1}}}", from=1-5, to=3-5]
+%   \end{tikzcd}\]
+%   Si nota quindi che \(!_{\mathbf{1'}} \circ !_{\mathbf{1}} = \id_{\mathbf{1}}\) e \(!_{\mathbf{1}} \circ !_{\mathbf{1'}} = \id_{\mathbf{1'}}\), cioè che \(!_{\mathbf{1}}^{-1} = !_{\mathbf{1'}}\) e che \(\mathbf{1} \cong \mathbf{1'}\).
+% \end{proof}
+
+\begin{proposition}
+  Se $\mathbf{1}$ e $\mathbf{1'}$ sono oggetti finali in una categoria $\mathcal{C}$, allora esiste un isomorfismo unico $!: \mathbf{1} \to \mathbf{1'}$ tra essi. 
+\end{proposition}
+
+\begin{proof}
+  Per la proprietà di oggetto finale, esistono morfismi unici $!: \mathbf{1} \to \mathbf{1'}$ e $!': \mathbf{1'} \to \mathbf{1}$. 
+  Considerando le loro composizioni, si costruiscono i seguenti diagrammi:
+
+  \[
+  \begin{tikzcd}
+    \mathbf{1} \arrow[r, "!", shift left] & \mathbf{1'} \arrow[l, "!'", shift left]
+  \end{tikzcd}
+  \quad \implies \quad
+  \begin{tikzcd}
+    \mathbf{1} \arrow[r, "!", bend left] \arrow[d, "\id_{\mathbf{1}}"', equal] & \mathbf{1'} \arrow[l, "!'", bend left] \\
+    \mathbf{1} & 
+  \end{tikzcd}
+  \text{ e }
+  \begin{tikzcd}
+    \mathbf{1'} \arrow[r, "!'", bend left] \arrow[d, "\id_{\mathbf{1'}}"', equal] & \mathbf{1} \arrow[l, "!", bend left] \\
+    \mathbf{1'} & 
+  \end{tikzcd}
+  \]
+
+  Poiché il morfismo da un oggetto finale a se stesso è unico, la composizione dei due morfismi coincide con l'identità dell'oggetto di partenza:
+  \[
+  !' \circ ! = \id_{\mathbf{1}} \quad \text{e} \quad ! \circ !' = \id_{\mathbf{1'}}
+  \]
+  Questo dimostra che $!$ è un isomorfismo (con inverso $!'$), e l'unicità è garantita dalla definizione di oggetto finale.
+\end{proof}
+
+\begin{example}
+  Nella categoria \(\Set\) qualunque insieme con un solo elemento è un oggetto finale: si sceglie canonicamente \(\mathbf{1} = \{*\}\).
+\end{example}

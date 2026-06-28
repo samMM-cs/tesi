@@ -1,0 +1,84 @@
+\ProvidesPackage{unipa-thesis}
+
+% Page layout
+\RequirePackage[a4paper, left=3.5cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+\RequirePackage{setspace}
+\onehalfspacing
+
+% Font settings
+\RequirePackage{newtxtext} % Times New Roman text
+\RequirePackage{newtxmath} % Times New Roman math
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+
+% Graphics package
+\RequirePackage{graphicx}
+
+% Custom commands for user input
+\newcommand{\schooltitle}{}
+\newcommand{\coursename}{}
+\newcommand{\departmentname}{}
+\newcommand{\thesistitle}{}
+\newcommand{\subtitle}{}
+\newcommand{\authorname}{}
+\newcommand{\advisorname}{}
+\newcommand{\academicyear}{}
+\newcommand{\coursecycle}{}
+
+% Conditional display for optional fields
+\newcommand{\optionalschooltitle}{\ifx\schooltitle\empty\else\textsc{\normalsize \schooltitle} \\[0.5cm]\fi}
+\newcommand{\optionalcoursecycle}{\ifx\coursecycle\empty\else\ \coursecycle\fi}
+
+% Title page settings
+\newcommand{\titlepagecontent}{
+    \begin{titlepage}
+        \begin{center}
+            \includegraphics[width=0.18\textwidth]{images/logo-unipa.png} % Adjust the path to the logo
+            
+            \textsc{\textbf{\large UNIVERSITÀ DEGLI STUDI DI PALERMO}} \\
+            \optionalschooltitle
+            
+            \textsc{\normalsize \departmentname} \\
+            \textsc{\normalsize \coursename} \\
+            
+            \vfill
+            
+            \textbf{\LARGE \thesistitle} \\
+            \vspace{0.5cm}
+            \textsc{\normalsize \subtitle} \\
+            
+            \vfill
+            
+            \begin{minipage}[t]{0.45\textwidth}
+                \begin{flushleft}
+                    \textsc{\small TESI DI LAUREA DI} \\
+                    \textsc{\small \textbf{\authorname}} \\
+                \end{flushleft}
+            \end{minipage}
+            \hfill
+            \begin{minipage}[t]{0.45\textwidth}
+                \begin{flushright}
+                    \textsc{\small RELATORE} \\
+                    \textsc{\small \textbf{\advisorname}} \\
+                \end{flushright}
+            \end{minipage}
+            
+            \vfill
+
+            \textsc{\optionalcoursecycle}\\
+            \textsc{ANNO ACCADEMICO \academicyear} \\
+            
+            % \vspace{0.5cm}
+            
+            \noindent\rule{\textwidth}{0.4pt} % Horizontal line
+            
+            \vspace{0.5cm}
+            
+            \includegraphics[width=0.1\textwidth]{images/triennale_logo.png} % Adjust the path to the logo
+            
+        \end{center}
+    \end{titlepage}
+}
+
+\endinput

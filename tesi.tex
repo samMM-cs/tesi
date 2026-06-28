@@ -1,0 +1,55 @@
+\documentclass[a4paper,12pt]{report}
+
+\usepackage{unipa-thesis}
+% Set the custom commands
+\renewcommand{\coursename}{Corso di Laurea in Informatica}
+\renewcommand{\departmentname}{Dipartimento di Matematica e Informatica}
+\renewcommand{\thesistitle}{Applicazioni della teoria delle categorie all'informatica teorica}
+\renewcommand{\subtitle}{Coinduzione e coalgebre}
+\renewcommand{\authorname}{Samuele Maria Morreale}
+\renewcommand{\advisorname}{Prof.ssa Giuseppa Castiglione}
+\renewcommand{\academicyear}{2025 - 2026}
+
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries}{\thechapter.}{.5em}{}
+
+\let\openbox\undefined
+\usepackage{amsmath}
+\DeclareMathOperator{\Ob}{\operatorname{\mathsf{Ob}}}
+\DeclareMathOperator{\Mor}{\operatorname{\mathsf{Mor}}}
+\DeclareMathOperator{\Hom}{\operatorname{\mathsf{Hom}}}
+\DeclareMathOperator{\id}{\operatorname{\mathsf{id}}}
+\DeclareMathOperator{\Set}{\mathbf{Set}}
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definizione}[chapter]
+
+\newtheorem{example}{Esempio}[chapter]
+\newtheorem{proposition}{Proposizione}[chapter]
+\newtheorem{theorem}{Teorema}[chapter]
+
+\usepackage{enumitem}
+
+\usepackage{tikz-cd}
+
+\begin{document}
+
+% Title Page
+\titlepagecontent
+
+\tableofcontents
+
+\chapter{Introduzione}
+
+\include{capitoli/categ}
+\include{capitoli/coalg}
+
+\chapter{Esempi pratici di coalgebre}
+% Your content here...
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
