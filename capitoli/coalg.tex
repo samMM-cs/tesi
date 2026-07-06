@@ -1,35 +1,174 @@
-\chapter{Coalgebre}
-\begin{definition}[Coalgebra]
-  Data una categoria \(\mathcal{C}\) e un endofuntore \(F: \mathcal{C} \to \mathcal{C}\)
-  \begin{enumerate}
-    \item Una \(F\)-\textbf{coalgebra} (si può omettere il funtore \(F\) se non crea confusione) consiste di un oggetto \(X\in\mathcal{C}\) e un morfismo \(c:X \to F(X)\). \(X\) di solito prende il nome di spazio degli stati o insieme portante della coalgebra, mentre \(c\) è detta transizione o struttura della coalgebra.
-    \item Un \textbf{omomorfismo di coalgebre} da una coalgebra \(c: X \to F(X)\) a \(d: Y \to F(Y)\) consiste di un morfismo \(F: X \to Y\) che rende il diagramma seguente commutativo:
+% \chapter{Coalgebre}
+% \begin{definition}[Coalgebra]
+%   Data una categoria \(\mathcal{C}\) e un endofuntore \(F: \mathcal{C} \to \mathcal{C}\)
+%   \begin{enumerate}
+%     \item Una \(F\)-\textbf{coalgebra} (si può omettere il funtore \(F\) se non crea confusione) consiste di un oggetto \(X\in\mathcal{C}\) e un morfismo \(c:X \to F(X)\). \(X\) di solito prende il nome di spazio degli stati o insieme portante della coalgebra, mentre \(c\) è detta transizione o struttura della coalgebra.
+%     \item Un \textbf{omomorfismo di coalgebre} da una coalgebra \(c: X \to F(X)\) a \(d: Y \to F(Y)\) consiste di un morfismo \(F: X \to Y\) che rende il diagramma seguente commutativo:
     
+%     \[
+%       \begin{tikzcd}[column sep=large, row sep=large]
+%         & F(X) \arrow[r, "F(f)"] & F(Y) \\
+%         & X \arrow[u, "c"] \arrow[r, "f"'] & Y \arrow[u, "d"']
+%       \end{tikzcd}
+%     \]
+
+%     \item Le \(F\)-coalgebre con i loro omomorfismi formano una categoria \(\mathbf{CoAlg(F)}\), che ammette un funtore \(\textbf{CoAlg(F)} \to \mathcal{C}\) che associa una coalgebra \(c: X \to F(X)\) al suo spazio degli stati e un omomorfismo di coalgebre \(f\) allo stesso morfismo visto come \(f \in \Mor(\mathcal{C})\).
+%   \end{enumerate}
+% \end{definition}
+
+% La commutatività del diagramma degli omomorfismi esprime una condizione di compatibilità: effettuare una transizione in \(X\) e poi applicare \(f\) produce lo stesso risultato che applicare \(f\) e poi effettuare una transizione in \(Y\). Un omomorfismo di coalgebre è quindi una mappa che rispetta la dinamica di entrambi i sistemi.
+
+% Sia \(A\) un insieme fissato. Il funtore
+% \[
+%   \begin{aligned}
+%     \mathrm{Seq}_A: \Set \to \Set \\ X \mapsto \{\bot\} \cup (A \times X)
+%   \end{aligned}
+% \]
+% è definito sulle funzioni come: data \(f : X \to Y\), la funzione \(\mathrm{Seq}_A(f) : \{\bot\} \cup (A \times X) \to \{\bot\} \cup (A \times Y)\) mappa \(\bot \mapsto \bot\) e \((a, x) \mapsto (a, f(x))\).
+
+% Una coalgebra \(c : S \to \{\bot\} \cup (A \times S)\) di questo funtore descrive un sistema in cui ogni stato \(x \in S\) può terminare (quando \(c(x) = \bot\)) oppure produrre un elemento osservabile \(a \in A\) e uno stato successore \(x' \in S\) (quando \(c(x) = (a, x')\)). Per indicare queste due situazioni si usa la notazione di transizione: si scrive \(x \downarrow\) quando \(c(x) = \bot\), e \(x \xrightarrow{a} x'\) quando \(c(x) = (a, x')\).
+
+
+% La nozione di oggetto finale si specializza, nella categoria \(\mathbf{CoAlg}(F)\), alla nozione di \textit{coalgebra finale}.
+
+% \begin{definition}[Coalgebra finale]
+%   Una \(F\)-\textbf{coalgebra finale} è un oggetto finale nella categoria \(\mathbf{CoAlg}(F)\), ovvero una coalgebra \(\zeta : Z \to F(Z)\) tale che per ogni coalgebra \(c : X \to F(X)\) esiste un unico omomorfismo di coalgebre \(\mathrm{beh}_c : X \to Z\):
+%   \begin{center}
+%     \begin{tikzcd}[column sep=large, row sep=large]
+%       F(X) \arrow[r, "F(\mathrm{beh}_c)", dashed] & F(Z) \\
+%       X \arrow[u, "c"] \arrow[r, "\mathrm{beh}_c"', dashed] & Z \arrow[u, "\zeta"']
+%     \end{tikzcd}
+%   \end{center}
+% \end{definition}
+
+% Il morfismo \(\mathrm{beh}_c\) è detto \textit{funzione di comportamento}: essa mappa ogni stato \(x \in X\) al suo \textit{comportamento osservabile} come elemento di \(Z\). L'esistenza di tale morfismo è garantita dalla finalità, mentre la sua unicità è la proprietà cruciale che alimenta il ragionamento coinduttivo.
+
+% \begin{proposition}[Finalità delle sequenze]
+%   L'insieme \(A^\infty = A^{*} \cup A^\mathbb{N}\) delle sequenze finite e infinite di elementi di \(A\), dotato della struttura di transizione
+%   \[
+%     \mathrm{next} : A^\infty \to \{\bot\} \cup (A \times A^\infty), \qquad
+%     \sigma \mapsto \begin{cases} \bot & \text{se } \sigma = \langle\,\rangle \\ (a, \sigma') & \text{se } \sigma = a \cdot \sigma' \end{cases}
+%   \]
+%   è una coalgebra finale per il funtore \(\mathrm{Seq}_A\). Cioè, per ogni coalgebra \(c : S \to \{\bot\} \cup (A \times S)\) esiste un unico omomorfismo \(\mathrm{beh}_c : S \to A^\infty\), che soddisfa:
+%   \begin{itemize}
+%     \item se \(c(x) = \bot\), allora \(\mathrm{next}(\mathrm{beh}_c(x)) = \bot\);
+%     \item se \(c(x) = (a, x')\), allora \(\mathrm{next}(\mathrm{beh}_c(x)) = (a, \mathrm{beh}_c(x'))\).
+%   \end{itemize}
+% \end{proposition}
+
+% Vale la pena sottolineare che la funzione \(\mathrm{next}\) è un isomorfismo: il suo inverso \(\mathrm{next}^{-1}\) mappa \(\bot\) alla sequenza vuota \(\langle\,\rangle\) e una coppia \((a, \tau)\) alla sequenza \(a \cdot \tau\). Questo fatto — che la struttura di transizione della coalgebra finale è un isomorfismo, cioè \(Z \cong F(Z)\) — è un risultato generale, non specifico alle sequenze.
+
+% La finalità di \(A^\infty\) fornisce un principio di \textbf{definizione per coricorsione}: per definire una funzione \(f : S \to A^\infty\) è sufficiente dotare \(S\) di una struttura di coalgebra \(c : S \to \{\bot\} \cup (A \times S)\), e la funzione di comportamento \(\mathrm{beh}_c\) è l'unica funzione così ottenuta. Non è necessario ragionare globalmente sulle sequenze distinguendo il caso finito da quello infinito: è sufficiente descrivere il comportamento locale, passo dopo passo.
+
+
+% L'unicità del morfismo \(\mathrm{beh}_c\) non è solo una proprietà tecnica: è il fondamento del \textbf{principio di coinduzione}. Esso afferma che per dimostrare l'uguaglianza di due funzioni \(f, g : S \to A^\infty\) è sufficiente mostrare che entrambe sono omomorfismi di coalgebre rispetto alla stessa struttura su \(S\).
+
+% Il principio è del tutto analogo a quello dell'induzione: come l'induzione usa l'inizialità di un'algebra per derivare uguaglianze tra funzioni definite ricorsivamente, la coinduzione usa la finalità di una coalgebra per derivare uguaglianze tra funzioni definite per coricorsione.
+
+% La teoria delle coalgebre fornisce anche un linguaggio per esprimere \textit{proprietà} degli stati di un sistema, non solo la loro struttura di transizione. Sia \(c : S \to \{\bot\} \cup (A \times S)\) una coalgebra per il funtore \(\mathrm{Seq}_A\). Per un predicato \(P \subseteq S\), si definisce il \textit{predicato successore} \(\bigcirc P \subseteq S\) come:
+% \[
+%   (\bigcirc P)(x) \iff \forall a \in A.\, \forall x' \in S.\, x \xrightarrow{a} x' \Rightarrow P(x').
+% \]
+% In parole: \(\bigcirc P\) vale per \(x\) se tutti gli stati successori di \(x\), qualora esistano, soddisfano \(P\).
+
+% \begin{definition}[Invariante]
+%   Un predicato \(P \subseteq S\) è un \textbf{invariante} della coalgebra \(c\) se \(P \subseteq \bigcirc P\), ovvero se per ogni \(x \in S\) con \(P(x)\) e ogni transizione \(x \xrightarrow{a} x'\), si ha \(P(x')\). Intuitivamente: una volta che \(P\) vale per uno stato, continua a valere per tutti i suoi successori.
+% \end{definition}
+
+% A partire dagli invarianti si definiscono i principali operatori temporali per le coalgebre.
+
+% \begin{definition}[Operatori temporali]
+%   Sia \(P \subseteq S\) un predicato arbitrario sullo spazio degli stati di una coalgebra di sequenze \(c : S \to \{\bot\} \cup (A \times S)\).
+%   \begin{enumerate}
+%     \item Il predicato \(\square P \subseteq S\) (\textit{d'ora in poi} \(P\)) è definito come il \textit{massimo invariante contenuto in} \(P\):
+%     \[
+%       (\square P)(x) \iff \exists Q \subseteq S.\, Q \text{ è un invariante} \land Q \subseteq P \land Q(x).
+%     \]
+%     \item Il predicato \(\diamond P \subseteq S\) (\textit{prima o poi} \(P\)) è definito come \(\diamond P = \neg\,\square\,\neg P\).
+%   \end{enumerate}
+% \end{definition}
+
+% Il predicato \(\square P\) vale per \(x\) quando tutti i futuri stati raggiungibili da \(x\) soddisfano \(P\), mentre \(\diamond P\) vale per \(x\) quando almeno uno stato futuro soddisfa \(P\). La formulazione tramite massimo invariante è quella che si generalizza più naturalmente a coalgebre di tipo diverso da \(\mathrm{Seq}_A\).
+
+% Le proprietà di \textit{sicurezza} dei sistemi, come ``la pressione non supererà mai la soglia critica'' o ``questo campo intero sarà sempre non nullo'', sono esprimibili come predicati della forma \(\square P\). Le proprietà di \textit{vivacità}, come ``il sistema terminerà prima o poi'', sono esprimibili come \(\diamond P\). La stessa struttura funziona per le classi di un linguaggio a oggetti, dove gli attributi e i metodi formano insieme una coalgebra del funtore appropriato.
+
+% \begin{proposition}
+%   Gli invarianti godono di alcune importanti proprietà di chiusura:
+%   \begin{enumerate}
+%     \item Il predicato costante vero è un invariante.
+%     \item Dati due invarianti \(P_1\) e \(P_2\), la loro intersezione \(P_1 \cap P_2\) è un invariante.
+%     \item Dato un invariante \(P\), anche \(\bigcirc P\) è un invariante.
+%   \end{enumerate}
+% \end{proposition}
+
+% \begin{proof}
+%   \begin{enumerate}
+%     \item Il predicato sempre vero coincide con l'intero spazio \(S\). Dato che, a partire da qualunque \(x \in S\), ogni suo successore \(x'\) è comunque in \(S\), si ha quindi che \(S \subseteq \bigcirc S\).
+%     \item Bisogna verificare che, preso un qualunque \(x \in P_1 \cap P_2\), esso appartenga anche a \(\bigcirc(P_1 \cap P_2)\):
+%     \[
+%       \begin{aligned}
+%         x \in P_1 \cap P_2 & \Longleftrightarrow x \in P_1 \wedge x \in P_2 \\
+%           &\Longrightarrow x \in \bigcirc P_1 \wedge x \in \bigcirc P_2 && \text{(\(P_1, P_2\) invarianti)} \\
+%           &\Longleftrightarrow \forall a \in A. \forall x'\in S. x \xrightarrow{a} x' \Rightarrow x' \in P_1 \wedge x' \in P_2 \\
+%           &\Longleftrightarrow \forall a \in A. \forall x' \in S. x \xrightarrow{a} x' \Rightarrow x' \in P_1 \cap P_2 \\
+%           &\Longleftrightarrow x \in \bigcirc(P_1 \cap P_2).
+%       \end{aligned}
+%     \]
+%     \item Bisogna verificare che, preso un qualunque \(x \in \bigcirc P\), esso appartenga anche a \(\bigcirc\bigcirc P\):
+%     \[
+%       \begin{aligned}
+%         x \in \bigcirc P &\Longleftrightarrow \forall a \in A. \forall x'\in S. x \xrightarrow{a} x' \Rightarrow x' \in P \\
+%         & \Longrightarrow \forall a \in A. \forall x'\in S. x \xrightarrow{a} x' \Rightarrow x' \in \bigcirc P && \text{(\(P\) invariante)} \\
+%         & \Longleftrightarrow x \in \bigcirc \bigcirc P
+%       \end{aligned}
+%     \]
+%   \end{enumerate}
+% \end{proof}
+
+% Le proprietà di chiusura appena dimostrate permettono di caratterizzare meglio l'operatore \textit{d'ora in poi} \(\square\).
+ 
+% \begin{proposition}
+%   L'operatore \(\square\) è un operatore di interno, nel senso che soddisfa le seguenti proprietà per ogni predicato \(P, Q \subseteq S\):
+%   \begin{enumerate}
+%     \item \(\square P \subseteq P\);
+%     \item \(\square P \subseteq \square\square P\);
+%     \item se \(P \subseteq Q\) allora \(\square P \subseteq \square Q\).
+%   \end{enumerate}
+%   Inoltre, un predicato \(P\) è un invariante se e solo se \(P = \square P\).
+% \end{proposition}
+ 
+% \begin{proof}
+%   \begin{enumerate}
+%     \item Per definizione, \(\square P\) è il massimo invariante contenuto in \(P\), quindi in particolare \(\square P \subseteq P\).
+%     \item Per la proposizione precedente, \(\square P\) è un invariante, quindi anche \(\bigcirc(\square P)\) è un invariante. Poiché \(\square P \subseteq P\), si ha che \(\square P\) è un invariante contenuto in \(P\), dunque \(\square P \subseteq \square P\). Occorre mostrare che \(\square P \subseteq \square\square P\), cioè che \(\square P\) è un invariante contenuto in \(\square P\). È contenuto in \(\square P\) banalmente. È un invariante per la proposizione precedente. Quindi per massimalità di \(\square\square P\) tra gli invarianti contenuti in \(\square P\), si ha \(\square P \subseteq \square\square P\).
+%     \item Se \(P \subseteq Q\), ogni invariante contenuto in \(P\) è anche contenuto in \(Q\). In particolare \(\square P\), che è un invariante contenuto in \(P\), è un invariante contenuto in \(Q\), quindi \(\square P \subseteq \square Q\) per massimalità di \(\square Q\).
+%   \end{enumerate}
+%   Per l'ultima affermazione: se \(P\) è un invariante, allora è il massimo invariante contenuto in se stesso, quindi \(P = \square P\). Viceversa, se \(P = \square P\), allora \(P\) è un invariante perché \(\square P\) lo è per costruzione.
+% \end{proof}
+\chapter{Coalgebre}
+
+\begin{definition}[Coalgebra]
+  Data una categoria \(\mathcal{C}\) e un endofuntore \(F: \mathcal{C} \to \mathcal{C}\):
+  \begin{enumerate}
+    \item Una \(F\)-\textbf{coalgebra} (si può omettere il funtore \(F\) se non crea confusione) consiste di un oggetto \(X\in\mathcal{C}\) e un morfismo \(c:X \to F(X)\). \(X\) prende il nome di \textit{spazio degli stati} o \textit{insieme portante} della coalgebra, mentre \(c\) è detta \textit{transizione} o \textit{struttura} della coalgebra.
+    \item Un \textbf{omomorfismo di coalgebre} da una coalgebra \(c: X \to F(X)\) a \(d: Y \to F(Y)\) consiste di un morfismo \(f: X \to Y\) che rende il diagramma seguente commutativo:
     \[
       \begin{tikzcd}[column sep=large, row sep=large]
-        & F(X) \arrow[r, "F(f)"] & F(Y) \\
-        & X \arrow[u, "c"] \arrow[r, "f"'] & Y \arrow[u, "d"']
+        F(X) \arrow[r, "F(f)"] & F(Y) \\
+        X \arrow[u, "c"] \arrow[r, "f"'] & Y \arrow[u, "d"']
       \end{tikzcd}
     \]
-
-    \item Le \(F\)-coalgebre con i loro omomorfismi formano una categoria \(\mathbf{CoAlg(F)}\), che ammette un funtore \(\textbf{CoAlg(F)} \to \mathcal{C}\) che associa una coalgebra \(c: X \to F(X)\) al suo spazio degli stati e un omomorfismo di coalgebre \(f\) allo stesso morfismo visto come \(f \in \Mor(\mathcal{C})\).
+    \item Le \(F\)-coalgebre con i loro omomorfismi formano una categoria \(\mathbf{CoAlg}(F)\), che ammette un funtore \(\mathbf{CoAlg}(F) \to \mathcal{C}\) che associa a ogni coalgebra \(c: X \to F(X)\) il suo spazio degli stati \(X\), e a ogni omomorfismo \(f\) lo stesso morfismo visto in \(\mathcal{C}\).
   \end{enumerate}
 \end{definition}
 
 La commutatività del diagramma degli omomorfismi esprime una condizione di compatibilità: effettuare una transizione in \(X\) e poi applicare \(f\) produce lo stesso risultato che applicare \(f\) e poi effettuare una transizione in \(Y\). Un omomorfismo di coalgebre è quindi una mappa che rispetta la dinamica di entrambi i sistemi.
 
-Sia \(A\) un insieme fissato. Il funtore
-\[
-  \begin{aligned}
-    \mathrm{Seq}_A: \Set \to \Set \\ X \mapsto \{\bot\} \cup (A \times X)
-  \end{aligned}
-\]
-è definito sulle funzioni come: data \(f : X \to Y\), la funzione \(\mathrm{Seq}_A(f) : \{\bot\} \cup (A \times X) \to \{\bot\} \cup (A \times Y)\) mappa \(\bot \mapsto \bot\) e \((a, x) \mapsto (a, f(x))\).
+L'endofuntore \(F\) è il parametro fondamentale della teoria: esso determina il \textit{tipo di interfaccia} del sistema, cioè la struttura degli stati successori e delle osservazioni accessibili. Per esempio, il funtore \(\mathrm{Seq}_A : X \mapsto \{\bot\} \cup (A \times X)\) descrive sistemi che possono terminare o produrre un elemento di \(A\) con un successore.
 
-Una coalgebra \(c : S \to \{\bot\} \cup (A \times S)\) di questo funtore descrive un sistema in cui ogni stato \(x \in S\) può terminare (quando \(c(x) = \bot\)) oppure produrre un elemento osservabile \(a \in A\) e uno stato successore \(x' \in S\) (quando \(c(x) = (a, x')\)). Per indicare queste due situazioni si usa la notazione di transizione: si scrive \(x \downarrow\) quando \(c(x) = \bot\), e \(x \xrightarrow{a} x'\) quando \(c(x) = (a, x')\).
+\section{Coalgebra finale e coricorsione}
 
-
-La nozione di oggetto finale si specializza, nella categoria \(\mathbf{CoAlg}(F)\), alla nozione di \textit{coalgebra finale}.
+La nozione di oggetto finale, introdotta nel capitolo precedente, si specializza nella categoria \(\mathbf{CoAlg}(F)\) alla nozione di \textit{coalgebra finale}.
 
 \begin{definition}[Coalgebra finale]
   Una \(F\)-\textbf{coalgebra finale} è un oggetto finale nella categoria \(\mathbf{CoAlg}(F)\), ovvero una coalgebra \(\zeta : Z \to F(Z)\) tale che per ogni coalgebra \(c : X \to F(X)\) esiste un unico omomorfismo di coalgebre \(\mathrm{beh}_c : X \to Z\):
@@ -41,94 +180,102 @@ La nozione di oggetto finale si specializza, nella categoria \(\mathbf{CoAlg}(F)
   \end{center}
 \end{definition}
 
-Il morfismo \(\mathrm{beh}_c\) è detto \textit{funzione di comportamento}: essa mappa ogni stato \(x \in X\) al suo \textit{comportamento osservabile} come elemento di \(Z\). L'esistenza di tale morfismo è garantita dalla finalità, mentre la sua unicità è la proprietà cruciale che alimenta il ragionamento coinduttivo.
+Il morfismo \(\mathrm{beh}_c\) è detto \textit{funzione di comportamento}: essa mappa ogni stato \(x \in X\) al suo \textit{comportamento osservabile} come elemento di \(Z\). Poiché la coalgebra finale è un oggetto finale in \(\mathbf{CoAlg}(F)\), dalla proposizione del capitolo precedente segue che essa è unica a meno di isomorfismo unico.
 
-\begin{proposition}[Finalità delle sequenze]
-  L'insieme \(A^\infty = A^{*} \cup A^\mathbb{N}\) delle sequenze finite e infinite di elementi di \(A\), dotato della struttura di transizione
+La struttura di transizione di una coalgebra finale gode di una proprietà notevole: è essa stessa un isomorfismo.
+
+\begin{theorem}[Punto fisso di Lambek]
+  Se \(\zeta : Z \to F(Z)\) è una coalgebra finale per l'endofuntore \(F\), allora \(\zeta\) è un isomorfismo, e in particolare \(Z \cong F(Z)\).
+\end{theorem}
+
+\begin{proof}
+  Applicando \(F\) alla coalgebra finale \(\zeta : Z \to F(Z)\) si ottiene una nuova coalgebra \(F(\zeta) : F(Z) \to F(F(Z))\). Per finalità esiste un unico omomorfismo \(f : F(Z) \to Z\) tale che il seguente diagramma commuti:
+  \begin{center}
+    \begin{tikzcd}[column sep=large, row sep=large]
+      F(F(Z)) \arrow[r, "F(f)"] & F(Z) \\
+      F(Z) \arrow[u, "F(\zeta)"] \arrow[r, "f"'] & Z \arrow[u, "\zeta"']
+    \end{tikzcd}
+  \end{center}
+  Mostriamo che \(f = \zeta^{-1}\). La composizione \(f \circ \zeta : Z \to Z\) è un omomorfismo dalla coalgebra \(\zeta\) a se stessa; anche \(\mathrm{id}_Z\) lo è, e per unicità si conclude \(f \circ \zeta = \mathrm{id}_Z\). Per l'equazione inversa:
   \[
-    \mathrm{next} : A^\infty \to \{\bot\} \cup (A \times A^\infty), \qquad
-    \sigma \mapsto \begin{cases} \bot & \text{se } \sigma = \langle\,\rangle \\ (a, \sigma') & \text{se } \sigma = a \cdot \sigma' \end{cases}
+    \zeta \circ f = F(f) \circ F(\zeta) = F(f \circ \zeta) = F(\mathrm{id}_Z) = \mathrm{id}_{F(Z)}.
   \]
-  è una coalgebra finale per il funtore \(\mathrm{Seq}_A\). Cioè, per ogni coalgebra \(c : S \to \{\bot\} \cup (A \times S)\) esiste un unico omomorfismo \(\mathrm{beh}_c : S \to A^\infty\), che soddisfa:
-  \begin{itemize}
-    \item se \(c(x) = \bot\), allora \(\mathrm{next}(\mathrm{beh}_c(x)) = \bot\);
-    \item se \(c(x) = (a, x')\), allora \(\mathrm{next}(\mathrm{beh}_c(x)) = (a, \mathrm{beh}_c(x'))\).
-  \end{itemize}
-\end{proposition}
+  Dunque \(f = \zeta^{-1}\) e \(\zeta\) è un isomorfismo.
+\end{proof}
 
-Vale la pena sottolineare che la funzione \(\mathrm{next}\) è un isomorfismo: il suo inverso \(\mathrm{next}^{-1}\) mappa \(\bot\) alla sequenza vuota \(\langle\,\rangle\) e una coppia \((a, \tau)\) alla sequenza \(a \cdot \tau\). Questo fatto — che la struttura di transizione della coalgebra finale è un isomorfismo, cioè \(Z \cong F(Z)\) — è un risultato generale, non specifico alle sequenze.
+Il lemma dice che la coalgebra finale è un \textit{punto fisso} dell'endofuntore \(F\): si ha \(Z \cong F(Z)\). Per il funtore \(\mathrm{Seq}_A\) questo diventa \(A^\infty \cong \{\bot\} \cup (A \times A^\infty)\), l'equazione caratteristica delle sequenze finite e infinite.
 
-La finalità di \(A^\infty\) fornisce un principio di \textbf{definizione per coricorsione}: per definire una funzione \(f : S \to A^\infty\) è sufficiente dotare \(S\) di una struttura di coalgebra \(c : S \to \{\bot\} \cup (A \times S)\), e la funzione di comportamento \(\mathrm{beh}_c\) è l'unica funzione così ottenuta. Non è necessario ragionare globalmente sulle sequenze distinguendo il caso finito da quello infinito: è sufficiente descrivere il comportamento locale, passo dopo passo.
+La finalità fornisce un principio di \textbf{definizione per coricorsione}: per definire una funzione \(h : X \to Z\) nella coalgebra finale è sufficiente dotare \(X\) di una struttura di \(F\)-coalgebra \(c : X \to F(X)\), e la funzione di comportamento \(\mathrm{beh}_c\) è l'unica funzione che si ottiene in questo modo. Non è necessario specificare \(h\) globalmente: è sufficiente descrivere come si comporta un passo alla volta, e la finalità garantisce l'esistenza e unicità della funzione definita.
 
+\section{Coinduzione come principio di dimostrazione}
 
-L'unicità del morfismo \(\mathrm{beh}_c\) non è solo una proprietà tecnica: è il fondamento del \textbf{principio di coinduzione}. Esso afferma che per dimostrare l'uguaglianza di due funzioni \(f, g : S \to A^\infty\) è sufficiente mostrare che entrambe sono omomorfismi di coalgebre rispetto alla stessa struttura su \(S\).
+L'unicità del morfismo \(\mathrm{beh}_c\) non è solo una proprietà tecnica: è il fondamento del \textbf{principio di coinduzione}. Nella sua forma più generale, esso afferma che per dimostrare l'uguaglianza di due funzioni \(f, g : X \to Z\) verso la coalgebra finale è sufficiente esibire una struttura di coalgebra \(c : X \to F(X)\) rispetto alla quale sia \(f\) che \(g\) siano omomorfismi, poiché l'unicità di \(\mathrm{beh}_c\) ne forza allora la coincidenza.
 
-Il principio è del tutto analogo a quello dell'induzione: come l'induzione usa l'inizialità di un'algebra per derivare uguaglianze tra funzioni definite ricorsivamente, la coinduzione usa la finalità di una coalgebra per derivare uguaglianze tra funzioni definite per coricorsione.
+Il principio è del tutto analogo a quello dell'induzione: come l'induzione usa l'inizialità di un'algebra per derivare uguaglianze tra funzioni definite ricorsivamente, la coinduzione usa la finalità di una coalgebra per derivare uguaglianze tra funzioni definite per coricorsione. L'analogia formale tra i due principi verrà precisata nell'ultima sezione di questo capitolo.
 
-La teoria delle coalgebre fornisce anche un linguaggio per esprimere \textit{proprietà} degli stati di un sistema, non solo la loro struttura di transizione. Sia \(c : S \to \{\bot\} \cup (A \times S)\) una coalgebra per il funtore \(\mathrm{Seq}_A\). Per un predicato \(P \subseteq S\), si definisce il \textit{predicato successore} \(\bigcirc P \subseteq S\) come:
+\section{Predicati e invarianti}
+
+La teoria delle coalgebre fornisce anche un linguaggio per esprimere \textit{proprietà} degli stati di un sistema, non solo la loro struttura di transizione. Sia \(c : X \to F(X)\) una \(F\)-coalgebra. Per un sottoinsieme \(P \subseteq X\), il \textit{predicato successore} \(\bigcirc_c P \subseteq X\) è definito come:
 \[
-  (\bigcirc P)(x) \iff \forall a \in A.\, \forall x' \in S.\, x \xrightarrow{a} x' \Rightarrow P(x').
+  \bigcirc_c P = c^{-1}(F(P))
 \]
-In parole: \(\bigcirc P\) vale per \(x\) se tutti gli stati successori di \(x\), qualora esistano, soddisfano \(P\).
+dove \(F(P) \subseteq F(X)\) è l'immagine di \(P\) sotto l'azione del funtore \(F\) sull'inclusione \(P \hookrightarrow X\), e \(c^{-1}\) denota l'immagine inversa lungo \(c\). In parole: \(\bigcirc_c P\) è l'insieme degli stati la cui transizione cade interamente in \(F(P)\), ovvero degli stati i cui successori soddisfano tutti \(P\).
+
+Per il funtore \(\mathrm{Seq}_A : X \mapsto \{\bot\} \cup (A \times X)\) e una coalgebra \(c : S \to \{\bot\} \cup (A \times S)\), si ha \(F(P) = \{\bot\} \cup (A \times P)\), e quindi:
+\[
+  \bigcirc_c P = \{x \in S \mid c(x) = \bot \text{ oppure } c(x) = (a, x') \text{ con } x' \in P\}.
+\]
+Usando la notazione di transizione \(x \xrightarrow{a} x'\), questa condizione si legge: \(\bigcirc_c P\) vale per \(x\) se tutti gli stati successori di \(x\), qualora esistano, soddisfano \(P\).
 
 \begin{definition}[Invariante]
-  Un predicato \(P \subseteq S\) è un \textbf{invariante} della coalgebra \(c\) se \(P \subseteq \bigcirc P\), ovvero se per ogni \(x \in S\) con \(P(x)\) e ogni transizione \(x \xrightarrow{a} x'\), si ha \(P(x')\). Intuitivamente: una volta che \(P\) vale per uno stato, continua a valere per tutti i suoi successori.
+  Un predicato \(P \subseteq X\) è un \textbf{invariante} della coalgebra \(c : X \to F(X)\) se \(P \subseteq \bigcirc_c P\), ovvero se \(c(P) \subseteq F(P)\). Intuitivamente: una volta che \(P\) vale per uno stato, la sua transizione rimane in \(F(P)\), ovvero tutti i successori soddisfano ancora \(P\).
 \end{definition}
-
-A partire dagli invarianti si definiscono i principali operatori temporali per le coalgebre.
-
-\begin{definition}[Operatori temporali]
-  Sia \(P \subseteq S\) un predicato arbitrario sullo spazio degli stati di una coalgebra di sequenze \(c : S \to \{\bot\} \cup (A \times S)\).
-  \begin{enumerate}
-    \item Il predicato \(\square P \subseteq S\) (\textit{d'ora in poi} \(P\)) è definito come il \textit{massimo invariante contenuto in} \(P\):
-    \[
-      (\square P)(x) \iff \exists Q \subseteq S.\, Q \text{ è un invariante} \land Q \subseteq P \land Q(x).
-    \]
-    \item Il predicato \(\diamond P \subseteq S\) (\textit{prima o poi} \(P\)) è definito come \(\diamond P = \neg\,\square\,\neg P\).
-  \end{enumerate}
-\end{definition}
-
-Il predicato \(\square P\) vale per \(x\) quando tutti i futuri stati raggiungibili da \(x\) soddisfano \(P\), mentre \(\diamond P\) vale per \(x\) quando almeno uno stato futuro soddisfa \(P\). La formulazione tramite massimo invariante è quella che si generalizza più naturalmente a coalgebre di tipo diverso da \(\mathrm{Seq}_A\).
-
-Le proprietà di \textit{sicurezza} dei sistemi, come ``la pressione non supererà mai la soglia critica'' o ``questo campo intero sarà sempre non nullo'', sono esprimibili come predicati della forma \(\square P\). Le proprietà di \textit{vivacità}, come ``il sistema terminerà prima o poi'', sono esprimibili come \(\diamond P\). La stessa struttura funziona per le classi di un linguaggio a oggetti, dove gli attributi e i metodi formano insieme una coalgebra del funtore appropriato.
 
 \begin{proposition}
-  Gli invarianti godono di alcune importanti proprietà di chiusura:
+  Gli invarianti godono delle seguenti proprietà di chiusura:
   \begin{enumerate}
-    \item Il predicato costante vero è un invariante.
+    \item Il predicato costante vero, cioè \(X\) stesso, è un invariante.
     \item Dati due invarianti \(P_1\) e \(P_2\), la loro intersezione \(P_1 \cap P_2\) è un invariante.
-    \item Dato un invariante \(P\), anche \(\bigcirc P\) è un invariante.
+    \item Dato un invariante \(P\), anche \(\bigcirc_c P\) è un invariante.
   \end{enumerate}
 \end{proposition}
 
 \begin{proof}
   \begin{enumerate}
-    \item Il predicato sempre vero coincide con l'intero spazio \(S\). Dato che, a partire da qualunque \(x \in S\), ogni suo successore \(x'\) è comunque in \(S\), si ha quindi che \(S \subseteq \bigcirc S\).
-    \item Bisogna verificare che, preso un qualunque \(x \in P_1 \cap P_2\), esso appartenga anche a \(\bigcirc(P_1 \cap P_2)\):
+    \item Per ogni \(x \in X\) si ha \(c(x) \in F(X)\), quindi \(X \subseteq \bigcirc_c X\).
+    \item Poiché \(F\) è un funtore preserva le inclusioni, quindi \(F(P_1 \cap P_2) \subseteq F(P_1) \cap F(P_2)\). Dunque:
     \[
       \begin{aligned}
-        x \in P_1 \cap P_2 & \Longleftrightarrow x \in P_1 \wedge x \in P_2 \\
-          &\Longrightarrow x \in \bigcirc P_1 \wedge x \in \bigcirc P_2 && \text{(\(P_1, P_2\) invarianti)} \\
-          &\Longleftrightarrow \forall a \in A. \forall x'\in S. x \xrightarrow{a} x' \Rightarrow x' \in P_1 \wedge x' \in P_2 \\
-          &\Longleftrightarrow \forall a \in A. \forall x' \in S. x \xrightarrow{a} x' \Rightarrow x' \in P_1 \cap P_2 \\
-          &\Longleftrightarrow x \in \bigcirc(P_1 \cap P_2).
+        x \in P_1 \cap P_2 &\Longrightarrow x \in P_1 \wedge x \in P_2 \\
+        &\Longrightarrow c(x) \in F(P_1) \wedge c(x) \in F(P_2) && \text{(\(P_1, P_2\) invarianti)} \\
+        &\Longrightarrow c(x) \in F(P_1) \cap F(P_2) \\
+        &\Longrightarrow c(x) \in F(P_1 \cap P_2) \\
+        &\Longrightarrow x \in \bigcirc_c(P_1 \cap P_2).
       \end{aligned}
     \]
-    \item Bisogna verificare che, preso un qualunque \(x \in \bigcirc P\), esso appartenga anche a \(\bigcirc\bigcirc P\):
-    \[
-      \begin{aligned}
-        x \in \bigcirc P &\Longleftrightarrow \forall a \in A. \forall x'\in S. x \xrightarrow{a} x' \Rightarrow x' \in P \\
-        & \Longrightarrow \forall a \in A. \forall x'\in S. x \xrightarrow{a} x' \Rightarrow x' \in \bigcirc P && \text{(\(P\) invariante)} \\
-        & \Longleftrightarrow x \in \bigcirc \bigcirc P
-      \end{aligned}
-    \]
+    \item Bisogna verificare che \(\bigcirc_c P \subseteq \bigcirc_c \bigcirc_c P\). Sia \(x \in \bigcirc_c P\), cioè \(c(x) \in F(P)\). Poiché \(P\) è un invariante, \(c(P) \subseteq F(P)\), e quindi per funtorialità \(F(c)(F(P)) \subseteq F(F(P))\). Poiché \(P \subseteq \bigcirc_c P\) per invarianza, si ha \(F(P) \subseteq F(\bigcirc_c P)\), e quindi \(c(x) \in F(P) \subseteq F(\bigcirc_c P)\), cioè \(x \in \bigcirc_c \bigcirc_c P\).
   \end{enumerate}
 \end{proof}
 
-Le proprietà di chiusura appena dimostrate permettono di caratterizzare meglio l'operatore \textit{d'ora in poi} \(\square\).
- 
+\section{Operatori temporali}
+
+A partire dagli invarianti si definiscono i principali operatori temporali, in forma del tutto generale per una qualunque \(F\)-coalgebra.
+
+\begin{definition}[Operatori temporali]
+  Sia \(c : X \to F(X)\) una \(F\)-coalgebra e \(P \subseteq X\) un predicato arbitrario.
+  \begin{enumerate}
+    \item Il predicato \(\square P \subseteq X\) (\textit{d'ora in poi} \(P\)) è il \textit{massimo invariante contenuto in} \(P\):
+    \[
+      \square P = \bigcup \{Q \subseteq X \mid Q \text{ è un invariante e } Q \subseteq P\}.
+    \]
+    \item Il predicato \(\diamond P \subseteq X\) (\textit{prima o poi} \(P\)) è definito come \(\diamond P = \neg\,\square\,\neg P\).
+  \end{enumerate}
+\end{definition}
+
+Il predicato \(\square P\) vale per \(x\) quando tutti i futuri stati raggiungibili da \(x\) — nel senso determinato dall'azione di \(F\) — soddisfano \(P\). Il predicato \(\diamond P\) vale quando almeno uno stato futuro soddisfa \(P\). Le proprietà di \textit{sicurezza} dei sistemi sono esprimibili come \(\square P\), le proprietà di \textit{vivacità} come \(\diamond P\), e entrambe le definizioni hanno senso per qualsiasi tipo di sistema coalgebrico.
+
 \begin{proposition}
-  L'operatore \(\square\) è un operatore di interno, nel senso che soddisfa le seguenti proprietà per ogni predicato \(P, Q \subseteq S\):
+  L'operatore \(\square\) è un operatore di interno: per ogni predicato \(P, Q \subseteq X\),
   \begin{enumerate}
     \item \(\square P \subseteq P\);
     \item \(\square P \subseteq \square\square P\);
@@ -136,12 +283,50 @@ Le proprietà di chiusura appena dimostrate permettono di caratterizzare meglio 
   \end{enumerate}
   Inoltre, un predicato \(P\) è un invariante se e solo se \(P = \square P\).
 \end{proposition}
- 
+
 \begin{proof}
   \begin{enumerate}
     \item Per definizione, \(\square P\) è il massimo invariante contenuto in \(P\), quindi in particolare \(\square P \subseteq P\).
-    \item Per la proposizione precedente, \(\square P\) è un invariante, quindi anche \(\bigcirc(\square P)\) è un invariante. Poiché \(\square P \subseteq P\), si ha che \(\square P\) è un invariante contenuto in \(P\), dunque \(\square P \subseteq \square P\). Occorre mostrare che \(\square P \subseteq \square\square P\), cioè che \(\square P\) è un invariante contenuto in \(\square P\). È contenuto in \(\square P\) banalmente. È un invariante per la proposizione precedente. Quindi per massimalità di \(\square\square P\) tra gli invarianti contenuti in \(\square P\), si ha \(\square P \subseteq \square\square P\).
-    \item Se \(P \subseteq Q\), ogni invariante contenuto in \(P\) è anche contenuto in \(Q\). In particolare \(\square P\), che è un invariante contenuto in \(P\), è un invariante contenuto in \(Q\), quindi \(\square P \subseteq \square Q\) per massimalità di \(\square Q\).
+    \item Bisogna mostrare che ogni \(x \in \square P\) appartiene anche a \(\square\square P\), cioè che \(\square P\) è un invariante contenuto in \(\square P\). È contenuto in \(\square P\) banalmente. È un invariante: per la proposizione precedente, \(\square P\) è un invariante (è il massimo invariante contenuto in \(P\), e l'unione di invarianti è un invariante per chiusura sotto intersezioni arbitrarie). Poiché \(\square\square P\) è per definizione il massimo invariante contenuto in \(\square P\), si conclude \(\square P \subseteq \square\square P\).
+    \item Sia \(P \subseteq Q\). Ogni invariante \(R\) con \(R \subseteq P\) soddisfa anche \(R \subseteq Q\), e quindi è tra gli invarianti contenuti in \(Q\). In particolare, \(\square P\) — che è un invariante contenuto in \(P\), e quindi in \(Q\) — è uno degli invarianti la cui unione forma \(\square Q\). Dunque \(\square P \subseteq \square Q\).
   \end{enumerate}
-  Per l'ultima affermazione: se \(P\) è un invariante, allora è il massimo invariante contenuto in se stesso, quindi \(P = \square P\). Viceversa, se \(P = \square P\), allora \(P\) è un invariante perché \(\square P\) lo è per costruzione.
+  Per l'ultima affermazione. Se \(P\) è un invariante, allora \(P\) è esso stesso un invariante contenuto in \(P\), quindi \(P \subseteq \square P\); d'altra parte \(\square P \subseteq P\) per il punto 1, quindi \(P = \square P\). Viceversa, se \(P = \square P\), allora \(P\) è un invariante perché \(\square P\) è per costruzione un'unione di invarianti, e la proposizione precedente garantisce che l'unione di invarianti è un invariante.
 \end{proof}
+
+\section{Dualità con le algebre}
+
+La teoria delle coalgebre si comprende pienamente solo in relazione al suo duale: la teoria delle algebre per un funtore.
+
+\begin{definition}[Algebra e algebra iniziale]
+  Data una categoria \(\mathcal{C}\) e un endofuntore \(F : \mathcal{C} \to \mathcal{C}\):
+  \begin{enumerate}
+    \item Una \(F\)-\textbf{algebra} consiste di un oggetto \(X \in \mathcal{C}\) e un morfismo \(a : F(X) \to X\).
+    \item Un \textbf{omomorfismo di algebre} da \(a : F(X) \to X\) a \(b : F(Y) \to Y\) è un morfismo \(f : X \to Y\) tale che il diagramma seguente commuti:
+    \[
+      \begin{tikzcd}[column sep=large, row sep=large]
+        F(X) \arrow[r, "F(f)"] \arrow[d, "a"'] & F(Y) \arrow[d, "b"] \\
+        X \arrow[r, "f"'] & Y
+      \end{tikzcd}
+    \]
+    \item Un'\textbf{algebra iniziale} è un oggetto iniziale nella categoria \(\mathbf{Alg}(F)\) delle \(F\)-algebre: una \(F\)-algebra \(\iota : F(I) \to I\) dalla quale esiste un unico omomorfismo verso ogni altra \(F\)-algebra.
+  \end{enumerate}
+\end{definition}
+
+La dualità è precisa e sistematica, e può essere riassunta nella seguente tabella:
+
+\begin{center}
+  \begin{tabular}{ll}
+    \textbf{Algebre} & \textbf{Coalgebre} \\
+    \hline
+    morfismo \(F(X) \to X\) & morfismo \(X \to F(X)\) \\
+    costruzione & osservazione \\
+    algebra iniziale & coalgebra finale \\
+    induzione & coinduzione \\
+    ricorsione & coricorsione \\
+    tipi di dati & sistemi di stati \\
+  \end{tabular}
+\end{center}
+
+Dualmente al lemma di Lambek per le coalgebre, anche l'algebra iniziale è un punto fisso del funtore: la struttura \(\iota : F(I) \to I\) è un isomorfismo, e quindi \(I \cong F(I)\). Per il funtore \(X \mapsto 1 + X\) l'algebra iniziale è l'insieme \(\mathbb{N}\) dei numeri naturali con \(\iota = [\mathrm{zero}, \mathrm{succ}] : 1 + \mathbb{N} \to \mathbb{N}\), e la proprietà di inizialità corrisponde esattamente al principio di induzione di Peano. La coalgebra finale dello stesso funtore, invece, è l'insieme \(\mathbb{N} \cup \{\infty\}\) dei numeri naturali estesi.
+
+La distinzione tra algebre e coalgebre rispecchia una distinzione fondamentale in informatica teorica: un tipo di dati induttivo, come le liste finite, è completamente determinato dai suoi \textit{costruttori} — operazioni \(F(X) \to X\) che costruiscono elementi a partire da componenti più semplici. Una classe in un linguaggio a oggetti, invece, incapsula uno stato interno accessibile solo tramite \textit{distruttori} — operazioni \(X \to F(X)\) che osservano lo stato senza rivelarlo completamente.
