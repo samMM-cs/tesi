@@ -28,6 +28,7 @@
 \newtheorem{example}{Esempio}[chapter]
 \newtheorem{proposition}{Proposizione}[chapter]
 \newtheorem{theorem}{Teorema}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
 
 \usepackage{enumitem}
 
@@ -40,14 +41,11 @@
 
 \tableofcontents
 
-\chapter{Introduzione}
 
+\include{capitoli/intro}
 \include{capitoli/categ}
 \include{capitoli/coalg}
-
-\chapter{Esempi pratici di coalgebre}
-% Your content here...
-
+\include{capitoli/esempi}
 
 \bibliographystyle{plain}
 \bibliography{references}

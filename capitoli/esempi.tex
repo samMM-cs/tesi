@@ -1,0 +1,418 @@
+\chapter{Esempi pratici di coalgebre in informatica teorica}
+
+\section{Linguaggi regolari}
+
+Il primo esempio concreto di coalgebra applicata all'informatica teorica riguarda gli automi, di cui i riconoscitori di linguaggi regolari sono un caso particolare \cite{jacobs2017}.
+
+\subsection{Il funtore degli automi}
+
+Siano \(A\) un insieme fissato, interpretato come \textit{alfabeto di input}, e \(B\) un insieme fissato, interpretato come \textit{insieme di output}. Si consideri l'endofuntore su \(\Set\):
+\[
+  F(X) = B \times X^A.
+\]
+Una \(F\)-coalgebra \(\langle o, \delta \rangle : X \to B \times X^A\) consiste di due componenti, ottenute componendo \(\langle o, \delta \rangle\) con le proiezioni del prodotto:
+\begin{itemize}
+  \item una funzione di \textbf{osservazione} (o output) \(o : X \to B\), che associa a ogni stato \(x \in X\) un valore osservabile \(o(x) \in B\);
+  \item una funzione di \textbf{transizione} \(\delta : X \to X^A\), che, per currificazione, corrisponde a una funzione \(X \times A \to X\): dato uno stato \(x\) e un simbolo di input \(a \in A\), \(\delta(x)(a) \in X\) è lo stato successore raggiunto da \(x\) leggendo \(a\).
+\end{itemize}
+Una tale coalgebra è detta \textbf{automa deterministico} con alfabeto di input \(A\) e output \(B\), e \(X\) è il suo insieme di stati.
+
+Un omomorfismo tra due automi \(\langle o, \delta \rangle : X \to B \times X^A\) e \(\langle o', \delta' \rangle : Y \to B \times Y^A\) è, per la definizione generale di omomorfismo di coalgebre, una funzione \(f : X \to Y\) tale che:
+\[
+  o'(f(x)) = o(x) \qquad \text{e} \qquad f(\delta(x)(a)) = \delta'(f(x))(a)
+\]
+per ogni stato \(x \in X\) e ogni simbolo \(a \in A\). La prima equazione dice che \(f\) preserva l'output; la seconda dice che \(f\) è compatibile con la transizione: applicare \(f\) e poi transitare in \(Y\) equivale a transitare in \(X\) e poi applicare \(f\).
+
+\subsection{Automi come riconoscitori di linguaggi}
+
+Il caso di interesse per i linguaggi regolari si ottiene specializzando l'insieme di output a \(B = 2 = \{0, 1\}\), dove \(0\) rappresenta uno stato non accettante e \(1\) uno stato accettante.
+
+\begin{definition}[Funtore dei linguaggi]
+  Sia \(A\) un alfabeto fissato. Il funtore \(D_A : \Set \to \Set\) è definito da:
+  \[
+    D_A(X) = 2 \times X^A.
+  \]
+  Una \(D_A\)-coalgebra \(\langle o, \delta \rangle : X \to 2 \times X^A\) è detta \textbf{automa deterministico riconoscitore} (o semplicemente automa) sull'alfabeto \(A\): la componente \(o : X \to 2\) indica se uno stato è accettante (\(o(x) = 1\)) o meno (\(o(x) = 0\)), mentre \(\delta : X \to X^A\) è la funzione di transizione.
+\end{definition}
+
+A differenza della nozione classica di automa a stati finiti \cite{hopcroft2006,sipser2013}, questa definizione non richiede che \(X\) sia un insieme finito, né che venga fissato uno stato iniziale: la coalgebra descrive la dinamica dell'intero sistema di transizione. Uno stato iniziale, quando serve, si specifica separatamente scegliendo un elemento \(x_0 \in X\); la coppia \((X, \langle o, \delta\rangle, x_0)\) corrisponde allora alla nozione usuale di automa a stati finiti con stato iniziale, nel caso in cui \(X\) sia finito.
+
+Un omomorfismo di \(D_A\)-coalgebre tra \(\langle o, \delta \rangle : X \to 2 \times X^A\) e \(\langle o', \delta' \rangle : Y \to 2 \times Y^A\) è una funzione \(f : X \to Y\) tale che \(o = o' \circ f\) e \(f(\delta(x)(a)) = \delta'(f(x))(a)\) per ogni \(x \in X\) e \(a \in A\): \(f\) preserva l'accettazione degli stati e rispetta le transizioni su ogni simbolo dell'alfabeto.
+
+\subsection{La coalgebra finale dei linguaggi}
+
+Per il funtore \(D_A\), la coalgebra finale ha una descrizione concreta e familiare: è l'insieme di tutti i linguaggi su \(A\) \cite{jacobs2017,rutten2000}.
+
+\begin{proposition}
+  Sia \(A^*\) l'insieme delle parole finite su \(A\), e sia \(\mathcal{L}_A = 2^{A^*}\) l'insieme di tutti i linguaggi su \(A\) (cioè l'insieme delle parti di \(A^*\), identificato con l'insieme delle funzioni \(A^* \to 2\)). La struttura
+  \[
+    \langle o_L, \delta_L \rangle : \mathcal{L}_A \to 2 \times \mathcal{L}_A^A, \qquad
+    o_L(L) = \begin{cases} 1 & \text{se } \varepsilon \in L \\ 0 & \text{altrimenti} \end{cases}, \qquad
+    \delta_L(L)(a) = \{w \in A^* \mid aw \in L\}
+  \]
+  è una coalgebra finale per il funtore \(D_A\), dove \(\varepsilon\) denota la parola vuota. Questa struttura corrisponde all'operazione di scomposizione di un linguaggio rispetto al primo simbolo letto, studiata originariamente in un contesto puramente algebrico da \cite{brzozowski1964}.
+\end{proposition}
+
+La componente \(\delta_L(L)(a) = \{w \in A^* \mid aw \in L\}\) è l'insieme delle parole che, precedute da \(a\), appartengono ancora a \(L\). La struttura di coalgebra su \(\mathcal{L}_A\) codifica quindi due fatti elementari ma sufficienti a determinare completamente un linguaggio: se la parola vuota vi appartiene, e come si comporta il linguaggio dopo aver letto ciascun simbolo.
+
+Per la finalità di \(\mathcal{L}_A\), ogni automa \(\langle o, \delta \rangle : X \to 2 \times X^A\) ammette un unico omomorfismo \(\mathrm{beh} : X \to \mathcal{L}_A\), la funzione di comportamento. Esplicitando la condizione di omomorfismo rispetto alla struttura \(\langle o_L, \delta_L \rangle\), si ottiene che \(\mathrm{beh}\) è l'unica funzione che soddisfa:
+\[
+  \varepsilon \in \mathrm{beh}(x) \iff o(x) = 1, \qquad\qquad \delta_L\bigl(\mathrm{beh}(x)\bigr)(a) = \mathrm{beh}\bigl(\delta(x)(a)\bigr)
+\]
+per ogni stato \(x \in X\) e ogni simbolo \(a \in A\). Si può verificare che questa funzione è data esplicitamente da:
+\[
+  \mathrm{beh}(x) = \{w \in A^* \mid \hat{\delta}(x, w) \text{ è uno stato accettante}\},
+\]
+dove \(\hat{\delta} : X \times A^* \to X\) è l'estensione di \(\delta\) alle parole, definita ricorsivamente da \(\hat{\delta}(x, \varepsilon) = x\) e \(\hat{\delta}(x, aw) = \hat{\delta}(\delta(x)(a), w)\). In altre parole, \(\mathrm{beh}(x)\) è precisamente il \textbf{linguaggio riconosciuto} dall'automa a partire dallo stato \(x\): l'insieme di tutte le parole che, lette a partire da \(x\), conducono a uno stato accettante.
+
+Questa osservazione dà un significato preciso e generale alla nozione di linguaggio riconosciuto da un automa: non è altro che il comportamento coalgebrico dello stato nella coalgebra finale di \(D_A\). Un linguaggio \(L \subseteq A^*\) è \textbf{regolare} se è il comportamento di uno stato di un automa \(\langle o, \delta \rangle : X \to 2 \times X^A\) con \(X\) \textit{finito}; equivalentemente, se \(L = \mathrm{beh}(x_0)\) per uno stato iniziale \(x_0\) di un automa a stati finiti nel senso classico.
+
+\subsection{Chiusura dei linguaggi regolari}
+
+La descrizione coalgebrica permette di dimostrare le proprietà di chiusura dei linguaggi regolari \cite{hopcroft2006,sipser2013} costruendo direttamente automi (cioè \(D_A\)-coalgebre) per il complemento, l'unione, l'intersezione, la concatenazione e la stella di Kleene, e verificandone la correttezza esibendo esplicitamente un omomorfismo tra il nuovo automa e la coalgebra finale dei linguaggi.
+
+\begin{proposition}[Chiusura per complemento]
+  Se \(L \subseteq A^*\) è regolare, anche il suo complemento \(A^* \setminus L\) è regolare.
+\end{proposition}
+
+\begin{proof}
+  Sia \(\langle o, \delta \rangle : X \to 2 \times X^A\) un automa finito con stato \(x_0\) tale che \(\mathrm{beh}(x_0) = L\). Si definisce l'automa \(\langle \bar{o}, \delta \rangle : X \to 2 \times X^A\) sullo stesso insieme di stati \(X\) e con la stessa transizione \(\delta\), ma con osservazione complementata \(\bar{o}(x) = \overline{o(x)}\).
+
+  Si consideri la funzione \(\overline{\mathrm{beh}} : X \to \mathcal{L}_A\) definita da \(\overline{\mathrm{beh}}(x) = A^* \setminus \mathrm{beh}(x)\), e si verifichi che è un omomorfismo da \(\langle \bar o, \delta \rangle\) a \(\langle o_L, \delta_L \rangle\):
+  \[
+    \varepsilon \in \overline{\mathrm{beh}}(x) \iff \varepsilon \notin \mathrm{beh}(x) \iff o(x) = 0 \iff \bar{o}(x) = 1,
+  \]
+  e per la transizione, usando il fatto che \(\delta_L(A^* \setminus K)(a) = A^* \setminus \delta_L(K)(a)\) per ogni linguaggio \(K\) (poiché una parola \(w\) soddisfa \(aw \notin K\) se e solo se \(aw \in A^* \setminus K\)):
+  \[
+    \begin{aligned}
+      \delta_L\bigl(\overline{\mathrm{beh}}(x)\bigr)(a) & = \delta_L\bigl(A^* \setminus \mathrm{beh}(x)\bigr)(a) \\
+                                                        & = A^* \setminus \delta_L\bigl(\mathrm{beh}(x)\bigr)(a) \\
+                                                        & = A^* \setminus \mathrm{beh}(\delta(x)(a))             \\
+                                                        & = \overline{\mathrm{beh}}(\delta(x)(a)).
+    \end{aligned}
+  \]
+  Poiché \(\overline{\mathrm{beh}}\) è un omomorfismo verso la coalgebra finale, per unicità coincide con la funzione di comportamento dell'automa \(\langle \bar o, \delta \rangle\): \(\overline{\mathrm{beh}}(x) = A^* \setminus \mathrm{beh}(x)\) per ogni \(x \in X\), e in particolare per \(x_0\) si ottiene \(A^* \setminus L\). Poiché \(X\) è finito, \(A^* \setminus L\) è regolare.
+\end{proof}
+
+Le proprietà di chiusura per unione e intersezione si dimostrano in modo del tutto analogo, costruendo un automa \textit{prodotto}.
+
+\begin{proposition}[Chiusura per unione e intersezione]
+  Se \(L_1, L_2 \subseteq A^*\) sono regolari, anche \(L_1 \cup L_2\) e \(L_1 \cap L_2\) sono regolari.
+\end{proposition}
+
+\begin{proof}
+  Siano \(\langle o_1, \delta_1 \rangle : X_1 \to 2 \times X_1^A\) e \(\langle o_2, \delta_2 \rangle : X_2 \to 2 \times X_2^A\) automi finiti con stati iniziali \(x_1^0, x_2^0\) tali che \(\mathrm{beh}_1(x_1^0) = L_1\) e \(\mathrm{beh}_2(x_2^0) = L_2\). Si costruisce l'automa \textit{prodotto} sull'insieme di stati \(X_1 \times X_2\), con transizione \(\delta_\times : X_1 \times X_2 \to (X_1 \times X_2)^A\) data da:
+  \[
+    \delta_\times(x_1, x_2)(a) = \bigl(\delta_1(x_1)(a),\, \delta_2(x_2)(a)\bigr),
+  \]
+  e osservazioni, per l'unione e intersezione rispettivamente, date da:
+  \[o_\vee(x_1, x_2) = o_1(x_1) \vee o_2(x_2)\]
+  \[o_\wedge(x_1, x_2) = o_1(x_1) \wedge o_2(x_2)\]
+
+  Sia \(g_\vee : X_1 \times X_2 \to \mathcal{L}_A\) definita da \(g_\vee(x_1, x_2) = \mathrm{beh}_1(x_1) \cup \mathrm{beh}_2(x_2)\). Si verifica che \(g_\vee\) è un omomorfismo da \(\langle o_\vee, \delta_\times \rangle\) a \(\langle o_L, \delta_L \rangle\):
+  \[
+    \begin{aligned}
+      \varepsilon \in g_\vee(x_1, x_2) & \iff \varepsilon \in \mathrm{beh}_1(x_1) \vee \varepsilon \in \mathrm{beh}_2(x_2) \\
+                                       & \iff o_1(x_1) = 1 \vee o_2(x_2) = 1                                               \\
+                                       & \iff o_\vee(x_1, x_2) = 1,
+    \end{aligned}
+  \]
+  e per la transizione, usando il fatto che \(\delta_L(K_1 \cup K_2)(a) = \delta_L(K_1)(a) \cup \delta_L(K_2)(a)\) per ogni coppia di linguaggi \(K_1, K_2\) (poiché una parola \(w\) soddisfa \(aw \in K_1 \cup K_2\) se e solo se \(aw \in K_1\) oppure \(aw \in K_2\)):
+  \[
+    \begin{aligned}
+      \delta_L\bigl(g_\vee(x_1, x_2)\bigr)(a) & = \delta_L(\mathrm{beh}_1(x_1))(a) \cup \delta_L(\mathrm{beh}_2(x_2))(a) \\ &= \mathrm{beh}_1(\delta_1(x_1)(a)) \cup \mathrm{beh}_2(\delta_2(x_2)(a)) \\ &= g_\vee\bigl(\delta_\times(x_1, x_2)(a)\bigr).
+    \end{aligned}
+  \]
+  Per unicità dell'omomorfismo verso la coalgebra finale, \(g_\vee\) coincide con la funzione di comportamento dell'automa \(\langle o_\vee, \delta_\times \rangle\), e dunque \(g_\vee(x_1^0, x_2^0) = L_1 \cup L_2\) è il comportamento dello stato iniziale. Poiché \(X_1 \times X_2\) è finito, \(L_1 \cup L_2\) è regolare.
+
+  La dimostrazione per l'intersezione è identica, sostituendo \(o_\vee\) con \(o_\wedge\), \(g_\vee\) con \(g_\wedge(x_1,x_2) = \mathrm{beh}_1(x_1) \cap \mathrm{beh}_2(x_2)\), e \(\cup\) con \(\cap\) in ogni passaggio.
+\end{proof}
+
+Le tre dimostrazioni condividono la stessa struttura, che è il punto di forza dell'approccio coalgebrico: si costruisce un nuovo automa a partire da quelli dati, componendo transizione e osservazione componente per componente, si propone una funzione candidata verso la coalgebra finale espressa in termini dei comportamenti di partenza, e si verifica che tale funzione sia un omomorfismo. L'unicità garantita dalla finalità identifica allora questa funzione con il vero comportamento del nuovo automa. La finitezza dello spazio degli stati, che garantisce la regolarità del linguaggio risultante, si preserva automaticamente: il prodotto di due insiemi finiti è finito, e lo stesso insieme di stati basta per il complemento.
+
+Le rimanenti operazioni booleane sulla classe dei linguaggi regolari, come la differenza simmetrica o l'implicazione, si ottengono componendo le tre costruzioni presentate, poiché ogni funzione booleana si esprime a partire da complemento, unione e intersezione.
+
+\subsection{Chiusura per concatenazione e stella di Kleene}
+
+Le due operazioni fondamentali che restano da trattare, la concatenazione e la stella di Kleene, non si lasciano esprimere come semplice composizione dei due automi di partenza: la difficoltà è che, letta una parola \(w = uv\) con \(u \in L_1\), l'automa deve ``passare'' alla lettura di \(v\) secondo \(L_2\), ma il punto di transizione tra \(u\) e \(v\) non è noto a priori e può non essere unico. Si risolve il problema tracciando, ad ogni istante, non un singolo stato di \(L_2\) ma l'\textit{insieme di tutti gli stati di \(L_2\) raggiungibili} secondo le decomposizioni di \(w\) lette fino a quel punto, secondo la classica costruzione per sottoinsiemi \cite{hopcroft2006}.
+
+\begin{proposition}[Chiusura per concatenazione]
+  Se \(L_1, L_2 \subseteq A^*\) sono regolari, anche \(L_1 \cdot L_2 = \{uv \mid u \in L_1, v \in L_2\}\) è regolare.
+\end{proposition}
+
+\begin{proof}
+  Siano \(\langle o_1, \delta_1 \rangle : X_1 \to 2 \times X_1^A\) e \(\langle o_2, \delta_2 \rangle : X_2 \to 2 \times X_2^A\) automi finiti con stati iniziali \(x_1^0, x_2^0\) tali che \(\mathrm{beh}_1(x_1^0) = L_1\) e \(\mathrm{beh}_2(x_2^0) = L_2\). Si costruisce l'automa \(\langle o_\bullet, \delta_\bullet \rangle\) sull'insieme di stati \(Y = X_1 \times \mathcal{P}(X_2)\), definito da:
+  \[
+    \delta_\bullet(x_1, S)(a) = \bigl(\delta_1(x_1)(a),\; S_a\bigr), \qquad S_a = \delta_2(S)(a) \cup \begin{cases} \{x_2^0\} & \text{se } o_1(\delta_1(x_1)(a)) = 1, \\ \emptyset & \text{se } o_1(\delta_1(x_1)(a)) = 0, \end{cases}
+  \]
+  dove \(\delta_2(S)(a) = \{\delta_2(s)(a) \mid s \in S\}\), e con osservazione \(o_\bullet(x_1, S) = 1\) se e solo se esiste \(s \in S\) con \(o_2(s) = 1\). Lo stato iniziale è \((x_1^0, S_0)\), dove \(S_0 = \{x_2^0\}\) se \(o_1(x_1^0) = 1\), e \(S_0 = \emptyset\) se \(o_1(x_1^0) = 0\).
+
+  Intuitivamente, l'insieme \(S\) accumula lo stato di \(L_2\) per ogni possibile decomposizione già completata: ogni volta che la componente \(X_1\) raggiunge uno stato accettante, si aggiunge una nuova copia di \(x_2^0\) a \(S\), che da quel momento evolve parallelamente secondo \(\delta_2\).
+
+  Sia \(g : Y \to \mathcal{L}_A\) definita da \(g(x_1, S) = \mathrm{beh}_1(x_1) \cdot L_2 \cup \bigcup_{s \in S} \mathrm{beh}_2(s)\). Si nota preliminarmente che, per costruzione di \(\delta_\bullet\) e \(S_0\), vale l'invariante seguente su ogni stato \((x_1, S)\) raggiungibile da \((x_1^0, S_0)\):
+  \[
+    o_1(x_1) = 1 \implies x_2^0 \in S.
+  \]
+  Infatti l'invariante vale per lo stato iniziale per costruzione di \(S_0\), ed è preservato da \(\delta_\bullet\): se \(o_1(\delta_1(x_1)(a)) = 1\), allora \(x_2^0 \in S_a\) per costruzione.
+
+  Si verifica ora che \(g\) è un omomorfismo da \(\langle o_\bullet, \delta_\bullet \rangle\) a \(\langle o_L, \delta_L \rangle\). Per l'osservazione, \(\varepsilon \in g(x_1, S)\) se e solo se \(\varepsilon \in \mathrm{beh}_1(x_1) \cdot L_2\) oppure \(\varepsilon \in \mathrm{beh}_2(s)\) per qualche \(s \in S\); la prima condizione equivale a \(o_1(x_1) = 1\) e \(o_2(x_2^0) = 1\), e per l'invariante ciò implica \(x_2^0 \in S\), rendendo questa condizione un caso particolare della seconda. Dunque:
+  \[
+    \varepsilon \in g(x_1, S) \iff \exists s \in S.\, o_2(s) = 1 \iff o_\bullet(x_1, S) = 1.
+  \]
+
+  Per la transizione, si calcola innanzitutto \(\delta_L(K \cdot L_2)(a)\) per un linguaggio arbitrario \(K\), direttamente dalla definizione \(\delta_L(K \cdot L_2)(a) = \{w \in A^* \mid aw \in K \cdot L_2\}\). Una parola \(aw\) appartiene a \(K \cdot L_2\) se e solo se si decompone come \(aw = uv\) con \(u \in K\) e \(v \in L_2\). Se \(u \neq \varepsilon\), allora \(u\) inizia necessariamente con \(a\), cioè \(u = a u'\) con \(u' \in \delta_L(K)(a)\), e \(w = u'v\) con \(v \in L_2\), dando un contributo \(\delta_L(K)(a) \cdot L_2\). Se invece \(u = \varepsilon\), possibile solo se \(\varepsilon \in K\), allora \(v = aw\), cioè \(w \in \delta_L(L_2)(a)\). Riassumendo:
+  \[
+    \delta_L(K \cdot L_2)(a) = \delta_L(K)(a) \cdot L_2 \cup T_K, \qquad \text{dove } T_K =
+    \begin{cases}
+      \delta_L(L_2)(a) & \text{se } \varepsilon \in K, \\
+      \emptyset        & \text{altrimenti.}
+    \end{cases}
+  \]
+
+  Si distinguono ora due casi a seconda del valore di \(o_1(\delta_1(x_1)(a))\). Se \(o_1(\delta_1(x_1)(a)) = 0\), allora \(S_a = \delta_2(S)(a)\), e usando l'identità appena calcolata con \(K = \mathrm{beh}_1(x_1)\) (per cui \(\varepsilon \notin \mathrm{beh}_1(x_1)\), altrimenti \(o_1(x_1) = 1\) e, per l'invariante, \(x_2^0 \in S\), ma il caso generale è comunque coperto dal conto seguente) si ottiene:
+  \[
+    \begin{aligned}
+      \delta_L\bigl(g(x_1, S)\bigr)(a) & = \delta_L(\mathrm{beh}_1(x_1))(a) \cdot L_2 \,\cup\, \bigcup_{s \in S} \delta_L(\mathrm{beh}_2(s))(a) \\
+                                       & = \mathrm{beh}_1(\delta_1(x_1)(a)) \cdot L_2 \,\cup\, \bigcup_{s \in S} \mathrm{beh}_2(\delta_2(s)(a)) \\
+                                       & = g(\delta_1(x_1)(a), S_a).
+    \end{aligned}
+  \]
+
+  Se invece \(o_1(\delta_1(x_1)(a)) = 1\), allora \(S_a = \delta_2(S)(a) \cup \{x_2^0\}\), e poiché \(\varepsilon \in \mathrm{beh}_1(\delta_1(x_1)(a))\) si ha \(L_2 \subseteq \mathrm{beh}_1(\delta_1(x_1)(a)) \cdot L_2\). Dunque:
+  \[
+    \begin{aligned}
+      g(\delta_1(x_1)(a), S_a) & = \mathrm{beh}_1(\delta_1(x_1)(a)) \cdot L_2 \,\cup\, \bigcup_{s \in S} \mathrm{beh}_2(\delta_2(s)(a)) \,\cup\, \mathrm{beh}_2(x_2^0) \\
+                               & = \mathrm{beh}_1(\delta_1(x_1)(a)) \cdot L_2 \,\cup\, \bigcup_{s \in S} \mathrm{beh}_2(\delta_2(s)(a)),
+    \end{aligned}
+  \]
+  poiché \(\mathrm{beh}_2(x_2^0) = L_2 \subseteq \mathrm{beh}_1(\delta_1(x_1)(a)) \cdot L_2\) è assorbito nel primo termine. Questa espressione coincide con \(\delta_L(g(x_1,S))(a)\), calcolata come nel caso precedente ma includendo ora anche il contributo \(T_{\mathrm{beh}_1(x_1)}\) quando \(\varepsilon \in \mathrm{beh}_1(x_1)\): tale contributo, per l'invariante, è già assorbito nell'unione su \(S\) poiché \(x_2^0 \in S\). L'omomorfismo è dunque verificato anche in questo caso.
+
+  Per unicità dell'omomorfismo verso la coalgebra finale, \(g\) coincide con la funzione di comportamento dell'automa \(\langle o_\bullet, \delta_\bullet \rangle\). In particolare:
+  \[
+    g(x_1^0, S_0) = \mathrm{beh}_1(x_1^0) \cdot L_2 \cup \bigcup_{s \in S_0} \mathrm{beh}_2(s) = L_1 \cdot L_2,
+  \]
+  dove l'ultima uguaglianza segue perché, se \(S_0 = \{x_2^0\}\) (cioè \(\varepsilon \in L_1\)), il termine aggiuntivo \(\mathrm{beh}_2(x_2^0) = L_2\) è già contenuto in \(L_1 \cdot L_2\) tramite la decomposizione con \(u = \varepsilon\). Poiché \(Y = X_1 \times \mathcal{P}(X_2)\) è finito, \(L_1 \cdot L_2\) è regolare.
+\end{proof}
+
+Una costruzione analoga, applicata a un singolo automa, produce la chiusura per stella di Kleene.
+
+\begin{proposition}[Chiusura per stella di Kleene]
+  Se \(L \subseteq A^*\) è regolare, anche \(L^* = \bigcup_{n \geq 0} L^n\) è regolare.
+\end{proposition}
+
+\begin{proof}
+  Sia \(\langle o, \delta \rangle : X \to 2 \times X^A\) un automa finito con stato iniziale \(x_0\) tale che \(\mathrm{beh}(x_0) = L\). Si costruisce l'automa \(\langle o_*, \delta_* \rangle\) sull'insieme di stati \(Y = \mathcal{P}(X)\), definito da:
+  \[
+    \delta_*(S)(a) = \delta(S)(a) \cup \begin{cases} \{\delta(x_0)(a)\} & \text{se } \exists s \in S.\, o(s) = 1, \\ \emptyset & \text{altrimenti,} \end{cases} \]
+  \[
+    o_*(S) = \begin{cases} 1 & \text{se } S = \{x_0\} \text{ oppure } \exists s \in S.\, o(s) = 1, \\ 0 & \text{altrimenti,} \end{cases}
+  \]
+  con stato iniziale \(S_0 = \{x_0\}\). Intuitivamente, ogni volta che uno stato attivo \(s \in S\) è accettante per \(L\) (cioè una copia di \(L\) si è appena conclusa), si aggiunge al nuovo insieme di stati anche \(\delta(x_0)(a)\), simulando l'avvio immediato di una nuova copia; lo stato \(\{x_0\}\) è dichiarato sempre accettante, poiché rappresenta il punto in cui un numero qualsiasi (anche nullo) di copie di \(L\) si è concluso esattamente in quel punto.
+
+  Si definisce \(g : Y \to \mathcal{L}_A\) da:
+  \[
+    g(S) = \Bigl(\bigcup_{s \in S} \mathrm{beh}(s) \cdot L^*\Bigr) \,\cup\, \begin{cases} \{\varepsilon\} & \text{se } S = \{x_0\}, \\ \emptyset & \text{altrimenti.} \end{cases}
+  \]
+  Per l'osservazione, \(\varepsilon \in g(S)\) se e solo se \(S = \{x_0\}\), oppure \(\varepsilon \in \mathrm{beh}(s) \cdot L^*\) per qualche \(s \in S\) (cioè \(o(s) = 1\), poiché \(\varepsilon \in L^*\) sempre); questa è esattamente la condizione \(o_*(S) = 1\).
+
+  Per la transizione, si calcola innanzitutto \(\delta_L(L^*)(a)\) direttamente dalla sua definizione. Una parola \(aw\) appartiene a \(L^*\) se e solo se si decompone in un numero finito di fattori non vuoti ciascuno appartenente a \(L\) (i fattori vuoti si possono sempre eliminare senza cambiare la decomposizione). Il primo fattore, essendo non vuoto, inizia con \(a\); scrivendolo come \(a u' \in L\), cioè \(u' \in \delta_L(L)(a) = \mathrm{beh}(\delta(x_0)(a))\), la parola restante appartiene di nuovo a \(L^*\). Dunque:
+  \[
+    \delta_L(L^*)(a) = \mathrm{beh}(\delta(x_0)(a)) \cdot L^*.
+  \]
+
+  Per un generico stato \(s \in X\), applicando alla coppia \(K = \mathrm{beh}(s)\) lo stesso calcolo svolto per la concatenazione (Proposizione precedente), si ottiene:
+  \[
+    \delta_L\bigl(\mathrm{beh}(s) \cdot L^*\bigr)(a) = \mathrm{beh}(\delta(s)(a)) \cdot L^* \cup T_s, \qquad T_s =
+    \begin{cases}
+      \mathrm{beh}(\delta(x_0)(a)) \cdot L^* & \text{se } o(s) = 1, \\
+      \emptyset                              & \text{altrimenti.}
+    \end{cases}
+  \]
+  dove si è usata l'identità appena ricavata per \(\delta_L(L^*)(a)\). Sommando su tutti gli \(s \in S\) (il contributo di \(\{\varepsilon\}\), quando presente, si annulla poiché \(\delta_L(\{\varepsilon\})(a) = \emptyset\)):
+  \[
+    \delta_L\bigl(g(S)\bigr)(a) = \bigcup_{s \in S} \mathrm{beh}(\delta(s)(a)) \cdot L^* \,\cup\, \bigcup_{s \in S,\, o(s) = 1} \mathrm{beh}(\delta(x_0)(a)) \cdot L^*.
+  \]
+  Il secondo termine è non vuoto esattamente quando \(\exists s \in S.\, o(s) = 1\), condizione che coincide con quella che governa l'aggiunta di \(\delta(x_0)(a)\) a \(\delta_*(S)(a)\). Dunque:
+  \[
+    \delta_L\bigl(g(S)\bigr)(a) = \bigcup_{s' \in \delta_*(S)(a)} \mathrm{beh}(s') \cdot L^*.
+  \]
+  Questa espressione coincide con \(g\bigl(\delta_*(S)(a)\bigr)\), a meno dell'eventuale termine \(\{\varepsilon\}\) che comparirebbe in \(g\bigl(\delta_*(S)(a)\bigr)\) se \(\delta_*(S)(a) = \{x_0\}\): in tal caso, però, \(x_0 \in \delta_*(S)(a)\) implica che il termine \(\mathrm{beh}(x_0) \cdot L^* = L \cdot L^*\) è già presente nell'unione, e poiché \(L^* = \{\varepsilon\} \cup L \cdot L^*\) per definizione di stella di Kleene, si ha \(\varepsilon \notin L \cdot L^*\) solo se \(\varepsilon \notin L\); ma in tal caso l'unione ristretta al solo stato \(x_0\) resta comunque priva di \(\varepsilon\), consistentemente con il fatto che \(\delta_L(g(S))(a)\) sopra calcolato non contiene \(\varepsilon\) in quel caso. L'omomorfismo è dunque verificato.
+
+  Per unicità dell'omomorfismo verso la coalgebra finale, \(g\) coincide con la funzione di comportamento dell'automa \(\langle o_*, \delta_* \rangle\), e in particolare:
+  \[
+    g(S_0) = g(\{x_0\}) = \mathrm{beh}(x_0) \cdot L^* \cup \{\varepsilon\} = L \cdot L^* \cup \{\varepsilon\} = L^*.
+  \]
+  Poiché \(Y = \mathcal{P}(X)\) è finito, \(L^*\) è regolare.
+\end{proof}
+
+Anche in questo caso la dimostrazione segue lo schema generale: costruire un nuovo automa su uno spazio di stati finito ottenuto componendo o iterando gli spazi di partenza tramite prodotto e insieme delle parti, proporre una funzione candidata verso la coalgebra finale, e verificarne l'omomorfismo esplicitando le due condizioni della definizione. L'unicità garantita dalla finalità di \(\mathcal{L}_A\) identifica allora questa funzione con il vero comportamento del nuovo automa.
+
+\section{Grammatiche libere dal contesto}
+
+Il secondo esempio riguarda le grammatiche libere dal contesto (\textit{context-free grammar}, CFG) \cite{hopcroft2006,aho1986}, che a differenza degli automi non descrivono una singola sequenza di transizioni ma una \textit{ramificazione}: ogni simbolo non terminale può espandersi, secondo una o più produzioni, in una sequenza di simboli successori. Questa ramificazione richiede un funtore diverso da \(D_A\).
+
+\subsection{Il funtore degli alberi di derivazione}
+
+Sia \(\Sigma\) un insieme fissato, interpretato come alfabeto dei simboli terminali. Per ogni insieme \(X\), sia \(X^* = \bigcup_{n \geq 0} X^n\) l'insieme delle sequenze finite di elementi di \(X\) (incluso il prodotto vuoto per \(n=0\), che ha come unico elemento la sequenza vuota). Si consideri l'endofuntore su \(\Set\):
+\[
+  F(X) = \Sigma + \mathcal{P}(X^*).
+\]
+Una \(F\)-coalgebra \(e : X \to \Sigma + \mathcal{P}(X^*)\) descrive un sistema in cui ogni elemento \(x \in X\) è di due tipi possibili:
+\begin{itemize}
+  \item se \(e(x) = \kappa_1(a)\) per qualche \(a \in \Sigma\), allora \(x\) è un simbolo \textbf{terminale}: non si espande ulteriormente;
+  \item se \(e(x) = \kappa_2(R)\) per un insieme \(R \subseteq X^*\), allora \(x\) è un simbolo \textbf{non terminale}, ed \(R\) è l'insieme delle sue possibili \textbf{espansioni}: ciascun elemento di \(R\) è una sequenza finita \((x_1, \ldots, x_k) \in X^*\) di successori, corrispondente a una produzione applicabile a \(x\).
+\end{itemize}
+La presenza dell'insieme delle parti \(\mathcal{P}\) rende questa coalgebra \textit{non deterministica}: a un simbolo non terminale possono corrispondere più produzioni alternative, esattamente come per gli automi non deterministici già incontrati nel capitolo precedente.
+
+Un omomorfismo tra due coalgebre \(e : X \to \Sigma + \mathcal{P}(X^*)\) e \(e' : Y \to \Sigma + \mathcal{P}(Y^*)\) è una funzione \(f : X \to Y\) che rispetta questa struttura: se \(x\) è terminale con \(e(x) = \kappa_1(a)\), allora \(e'(f(x)) = \kappa_1(a)\); se \(x\) è non terminale con \(e(x) = \kappa_2(R)\), allora \(e'(f(x)) = \kappa_2(R')\), dove \(R' = \{(f(x_1), \ldots, f(x_k)) \mid (x_1, \ldots, x_k) \in R\}\) è l'immagine di \(R\) ottenuta applicando \(f\) componente per componente a ciascuna sequenza.
+
+\subsection{Grammatiche come coalgebre}
+
+Una grammatica libera dal contesto \(G = (N, \Sigma, P, S)\), con \(N\) insieme dei simboli non terminali, \(\Sigma\) alfabeto dei simboli terminali, \(P\) insieme delle produzioni della forma \(A \to \alpha\) con \(A \in N\) e \(\alpha \in (N \cup \Sigma)^*\), e \(S \in N\) simbolo iniziale, induce in modo canonico una \(F\)-coalgebra sull'insieme \(X = N \cup \Sigma\) di tutti i suoi simboli:
+\[
+  e_G(x) = \begin{cases}
+    \kappa_1(x)                                              & \text{se } x \in \Sigma, \\
+    \kappa_2\bigl(\{\alpha \mid (x \to \alpha) \in P\}\bigr) & \text{se } x \in N.
+  \end{cases}
+\]
+In parole: ogni simbolo terminale è coalgebricamente terminale nel senso della definizione precedente; ogni simbolo non terminale \(A\) ha come espansioni esattamente i membri destri di tutte le produzioni di \(A\) presenti nella grammatica. Il simbolo iniziale \(S \in X\) individua il punto di partenza da cui si originano tutte le derivazioni descritte dalla grammatica.
+
+\begin{example}
+  Si consideri la grammatica per le espressioni aritmetiche ben parentesizzate su \(\{+, (, )\} \cup \{n\}\), con un unico non terminale \(E\) e produzioni \(E \to n \mid E + E \mid (E)\). La coalgebra corrispondente ha \(e_G(E) = \kappa_2\bigl(\{n, E+E, (E)\}\bigr)\), mentre ogni simbolo terminale \(a \in \{n, +, (, )\}\) soddisfa \(e_G(a) = \kappa_1(a)\).
+\end{example}
+
+Diversamente dal caso degli automi, questa coalgebra non ha una nozione altrettanto immediata di coalgebra finale che restituisca ``il linguaggio generato'': la struttura \(e_G\) descrive direttamente l'insieme delle produzioni disponibili a ogni simbolo, ed è già essa stessa l'oggetto di interesse primario. È su questa struttura, piuttosto che sul suo comportamento in una coalgebra finale, che si applicano gli operatori temporali sviluppati nel capitolo precedente \cite{jacobs2017}.
+
+\subsection{Proprietà strutturali tramite operatori temporali}
+
+Applicando la definizione generale del capitolo precedente, il predicato successore \(\bigcirc_G P \subseteq X\) per un sottoinsieme \(P \subseteq X\) si specializza, per il funtore \(F(X) = \Sigma + \mathcal{P}(X^*)\), come segue. Poiché la componente \(\Sigma\) di \(F\) è costante (non dipende da \(X\)), ogni simbolo terminale soddisfa banalmente \(\bigcirc_G P\), qualunque sia \(P\). Per un simbolo non terminale \(A\) con \(e_G(A) = \kappa_2(R)\), invece:
+\[
+  A \in \bigcirc_G P \iff \forall (A \to \alpha) \in R.\, \forall x \in \alpha.\, x \in P,
+\]
+cioè: \(A\) soddisfa \(\bigcirc_G P\) se e solo se \textit{ogni} produzione di \(A\) contiene, nel membro destro, solamente simboli di \(P\). Si noti la doppia quantificazione universale, su tutte le produzioni e su tutti i simboli di ciascuna produzione: riflette il fatto che, non essendoci alcuna scelta di produzione privilegiata, un simbolo soddisfa \(\bigcirc_G P\) solo se \(P\) è preservato indipendentemente da quale produzione venga applicata.
+
+\begin{proposition}[Contenimento sintattico]
+  Sia \(P \subseteq X\) un insieme di simboli. Se \(x \in \square P\), allora ogni simbolo che compare in un qualunque albero di derivazione con radice \(x\), ottenuto applicando ripetutamente le produzioni di \(G\) in un modo qualsiasi, appartiene a \(P\).
+\end{proposition}
+
+\begin{proof}
+  Per definizione, \(\square P\) è il massimo invariante contenuto in \(P\), dunque in particolare è esso stesso un invariante: \(\square P \subseteq \bigcirc_G \square P\). Sia \(x \in \square P\) e sia \(x_1, \ldots, x_k\) una qualunque sequenza di simboli ottenuta espandendo \(x\) tramite una produzione applicabile. Per la caratterizzazione di \(\bigcirc_G\) sopra, \(x \in \bigcirc_G\square P\) implica \(x_i \in \square P\) per ogni \(i\), e in particolare \(x_i \in P\) per il punto 1 della proposizione sull'operatore di interno (\(\square P \subseteq P\)). Iterando questo argomento su ogni livello dell'albero di derivazione, cioè procedendo per induzione sulla profondità del nodo nell'albero, usando a ogni passo che il simbolo corrente appartiene a \(\square P\), quindi a \(P\), e i suoi successori appartengono di nuovo a \(\square P\), si conclude che ogni simbolo dell'albero appartiene a \(P\).
+\end{proof}
+
+Questa proposizione dà un significato preciso alla nozione di ``contenimento sintattico'' di una grammatica: prendendo \(P\) come il complemento di un simbolo indesiderato \(z \in X\), \(S \in \square P\) esprime che \(z\) non compare in \textit{nessun} albero di derivazione originato da \(S\), qualunque sequenza di produzioni si scelga di applicare — una proprietà di sicurezza nel senso già discusso nel capitolo precedente, qui applicata all'analisi strutturale della grammatica anziché alla dinamica di un automa.
+
+\begin{proposition}[Raggiungibilità]
+  Sia \(P \subseteq X\) un insieme di simboli, e sia \(x \in X\). Se esiste un albero di derivazione con radice \(x\) che contiene, tra i suoi nodi, un simbolo appartenente a \(P\), allora \(x \in \diamond P\).
+\end{proposition}
+
+\begin{proof}
+  Si consideri l'insieme \[U = \{x \in X \mid \text{nessun albero di derivazione con radice } x \text{ contiene un simbolo di } P\}.\] Si mostra che \(U\) è un invariante contenuto in \(X \setminus P\), da cui la tesi seguirà per massimalità di \(\square\).
+
+  Anzitutto \(U \subseteq X \setminus P\): se \(x \in P\), l'albero banale costituito dal solo nodo \(x\) è un albero di derivazione con radice \(x\) che contiene un simbolo di \(P\) (\(x\) stesso), quindi \(x \notin U\).
+
+  Si mostra ora che \(U\) è un invariante, cioè \(U \subseteq \bigcirc_G U\). Sia \(x \in U\) non terminale (il caso terminale è immediato, poiché ogni simbolo terminale soddisfa banalmente \(\bigcirc_G U\)), e sia \((x_1, \ldots, x_k)\) una qualunque sequenza ottenuta da una produzione applicabile a \(x\). Se, per assurdo, qualche \(x_i \notin U\), allora esisterebbe un albero di derivazione con radice \(x_i\) contenente un simbolo di \(P\); componendo questo albero come sottoalbero di \(x_i\) all'interno di una derivazione di \(x\) che applica la produzione considerata, si otterrebbe un albero di derivazione con radice \(x\) contenente un simbolo di \(P\), contraddicendo \(x \in U\). Dunque tutti i successori di \(x\), per ogni produzione applicabile, appartengono a \(U\), cioè \(x \in \bigcirc_G U\).
+
+  Essendo \(U\) un invariante contenuto in \(X \setminus P\), per massimalità di \(\square\) si ha \(U \subseteq \square(X \setminus P) = \neg \diamond P\) (dove l'ultima uguaglianza segue dalla definizione \(\diamond P = \neg \square \neg P\)). Equivalentemente, \(\diamond P \subseteq X \setminus U\), cioè \(\diamond P\) contiene ogni simbolo \(x\) tale che \(x \notin U\), ovvero ogni simbolo da cui esiste un albero di derivazione contenente un simbolo di \(P\). Questo è precisamente l'enunciato della proposizione.
+\end{proof}
+
+La proposizione di raggiungibilità formalizza una domanda classica nell'analisi delle grammatiche: quali simboli sono raggiungibili a partire dal simbolo iniziale \(S\)? Un simbolo \(z\) è raggiungibile da \(S\) precisamente quando \(S \in \diamond \{z\}\). Le grammatiche in cui ogni simbolo di \(N \cup \Sigma\) è raggiungibile da \(S\) sono dette \textbf{ridotte} \cite{hopcroft2006,aho1986}: ogni simbolo non raggiungibile può essere eliminato dalla grammatica, insieme a tutte le produzioni che lo coinvolgono, senza alterare il linguaggio generato da \(S\). La caratterizzazione tramite \(\diamond\) rende esplicito, in termini puramente coalgebrici, l'algoritmo classico di eliminazione dei simboli inutili in una grammatica libera dal contesto.
+
+\begin{example}
+  Si consideri la grammatica \(G = (\{S, A, B, C\}, \{a, b\}, P, S)\) con produzioni:
+  \[
+    S \to aA \mid b, \qquad A \to aA \mid B, \qquad B \to bB, \qquad C \to a \mid SC.
+  \]
+  Applicando \(e_G\), le espansioni sono \(e_G(S) = \kappa_2(\{aA, b\})\), \(e_G(A) = \kappa_2(\{aA, B\})\), \(e_G(B) = \kappa_2(\{bB\})\), \(e_G(C) = \kappa_2(\{a, SC\})\).
+
+  Calcolando \(\diamond\{X\}(S)\) per ciascun simbolo \(X\), si trova che \(S\) raggiunge \(A\) (tramite la produzione \(S \to aA\)) e, tramite \(A\), anche \(B\) (tramite \(A \to B\)); dunque \(A\) e \(B\) sono raggiungibili da \(S\). Il simbolo \(C\), invece, non compare in nessuna espansione di \(S\), \(A\) o \(B\), e dunque \(S \notin \diamond\{C\}\): nessun albero di derivazione con radice \(S\) può mai contenere \(C\), coerentemente con il fatto che \(C\) non appare in nessuna produzione degli altri simboli.
+
+  D'altra parte, come si vedrà nella sottosezione seguente, i simboli \(A\) e \(B\) non sono \textit{generativi}: ogni loro espansione richiede, direttamente o indirettamente, un'ulteriore occorrenza di \(B\), senza mai raggiungere una sequenza di soli simboli terminali. Combinando le due analisi, nessuno dei simboli \(A, B, C\) è utile (raggiungibile \emph{e} generativo): possono essere eliminati insieme a tutte le produzioni che li coinvolgono, riducendo \(G\) alla grammatica equivalente con l'unica produzione \(S \to b\), che genera il linguaggio \(\{b\}\) — lo stesso linguaggio generato da \(G\), poiché ogni derivazione che sceglie \(S \to aA\) non può mai terminare in una stringa di soli terminali.
+\end{example}
+
+\subsection{Ricorsività}
+
+Un'altra proprietà strutturale classica delle grammatiche \cite{hopcroft2006}, la presenza di simboli \textbf{ricorsivi}, si esprime anch'essa tramite \(\diamond\), con un piccolo accorgimento necessario per escludere il caso banale.
+
+\begin{definition}[Non terminale ricorsivo]
+  Un simbolo \(A \in N\) è \textbf{ricorsivo} se esiste una produzione \(A \to \alpha\) e un simbolo \(x\) che compare in \(\alpha\) tale che \(x = A\) oppure \(A \in \diamond\{x\}\).
+\end{definition}
+
+La clausola \(x = A\) cattura la ricorsività \textit{immediata} (una produzione di \(A\) contiene \(A\) stesso nel membro destro), mentre la clausola \(A \in \diamond\{x\}\) cattura la ricorsività \textit{indiretta}, tramite un successore \(x\) da cui \(A\) è nuovamente raggiungibile. Si noti che non è corretto definire semplicemente ``\(A\) è ricorsivo se \(A \in \diamond\{A\}\)'': per come \(\diamond\) è stato costruito come duale del massimo invariante \(\square\), e poiché ogni invariante \(Q\) soddisfa banalmente \(A \in Q \Rightarrow A \in \bigcirc_G Q\) senza che ciò richieda alcun passo di derivazione, la relazione \(A \in \diamond\{A\}\) rischierebbe di non distinguere un simbolo genuinamente ricorsivo da un artefatto della definizione; richiedere che il primo passo avvenga verso un successore \(x\) esplicito, e solo da lì eventualmente si richiuda su \(A\), garantisce che venga catturata una derivazione di lunghezza almeno \(1\).
+
+Un simbolo ricorsivo utile è precisamente ciò che, combinato con la sua raggiungibilità da \(S\) e la sua generatività (introdotta nella sottosezione successiva), garantisce che il linguaggio generato da \(G\) sia infinito: la porzione di derivazione da \(A\) a se stesso può essere ripetuta un numero arbitrario di volte.
+
+\section{Macchine di Turing}
+ 
+Il terzo esempio riguarda le macchine di Turing. A differenza degli automi a stati finiti, la cui transizione è totale e deterministica, una macchina di Turing può bloccarsi senza aver terminato (\textit{parzialità} della funzione di transizione), può avere più mosse applicabili in una data configurazione (\textit{non determinismo}), e la sua computazione può non arrestarsi mai. Occorre dunque un funtore che generalizzi \(D_A(X) = 2 \times X^A\) sostituendo la componente di transizione totale e deterministica \(X^A\) con una componente che ammetta tutte e tre queste possibilità.
+ 
+\subsection{Il funtore delle macchine di Turing}
+ 
+Si consideri l'endofuntore su \(\Set\):
+\[
+  T(X) = 2 \times \mathcal{P}(X).
+\]
+Una \(T\)-coalgebra \(\langle o, \delta \rangle : X \to 2 \times \mathcal{P}(X)\) consiste, come nel caso di \(D_A\), di una funzione di osservazione \(o : X \to 2\) e di una funzione di transizione \(\delta : X \to \mathcal{P}(X)\), quest'ultima però a valori nell'insieme delle parti anziché in \(X^A\). La differenza rispetto a \(D_A\) è duplice: \(\delta(x)\) può contenere più di un elemento (non determinismo: più stati successori sono possibili da \(x\)) oppure può essere l'insieme vuoto (parzialità: nessuna transizione è applicabile da \(x\), e la computazione si blocca in \(x\)). In questo modo \(\mathcal{P}(X)\) codifica in un'unica componente sia il non determinismo sia la parzialità, senza bisogno di un funtore separato per ciascuno dei due fenomeni.
+ 
+Un omomorfismo tra due \(T\)-coalgebre \(\langle o, \delta \rangle : X \to 2 \times \mathcal{P}(X)\) e \(\langle o', \delta' \rangle : Y \to 2 \times \mathcal{P}(Y)\) è una funzione \(f : X \to Y\) tale che \(o = o' \circ f\) e \(f[\delta(x)] = \delta'(f(x))\) per ogni \(x \in X\), dove \(f[\delta(x)] = \{f(x') \mid x' \in \delta(x)\}\) denota l'immagine diretta di \(\delta(x)\) lungo \(f\).
+ 
+\subsection{Macchine di Turing come coalgebre}
+ 
+Una macchina di Turing (non deterministica) è specificata da un insieme di stati \(Q\), un alfabeto di nastro \(\Gamma\) con simbolo blank, e una funzione di transizione \(\delta_Q : Q \times \Gamma \to \mathcal{P}(Q \times \Gamma \times \{L, R\})\), insieme a un insieme \(Q_{\mathrm{acc}} \subseteq Q\) di stati accettanti, dai quali per convenzione non è definita alcuna transizione ulteriore.
+ 
+Una \textbf{configurazione} è una tripla \(c = (q, \tau, i)\), dove \(q \in Q\) è lo stato corrente, \(\tau : \mathbb{N} \to \Gamma\) è il contenuto del nastro (con supporto finito rispetto al blank) e \(i \in \mathbb{N}\) è la posizione della testina. Sia \(C\) l'insieme di tutte le configurazioni. La macchina induce canonicamente una \(T\)-coalgebra \(\langle o_M, \delta_M \rangle : C \to 2 \times \mathcal{P}(C)\):
+\[
+  o_M(q, \tau, i) = \begin{cases} 1 & \text{se } q \in Q_{\mathrm{acc}}, \\ 0 & \text{altrimenti,} \end{cases}
+\]
+\[
+  \delta_M(q, \tau, i) = \bigl\{ (q', \tau[i \mapsto b], i + d) \bigm| (q', b, d) \in \delta_Q(q, \tau(i)) \bigr\}.
+\]
+Si noti che \(\delta_M(q,\tau,i) = \emptyset\) esattamente quando \(\delta_Q(q, \tau(i)) = \emptyset\), incluso il caso \(q \in Q_{\mathrm{acc}}\): la parzialità della funzione di transizione della macchina è così codificata direttamente dalla possibilità che la componente \(\mathcal{P}(C)\) sia vuota, esattamente come una parola priva di produzioni applicabili in un simbolo non terminale codifica, nel funtore delle grammatiche, l'assenza di ulteriori espansioni.
+ 
+\begin{example}
+  Si consideri una macchina che, ricevuto in input un numero \(n\) in notazione unaria, verifica se \(n\) è composto: in ogni configurazione con stato non deterministico di ``ipotesi'', la macchina sceglie non deterministicamente un divisore candidato \(2 \leq k < n\) e prosegue verificandolo. La coalgebra corrispondente ha, in tali configurazioni, \(\delta_M(c)\) con tanti elementi quanti sono i valori di \(k\) ammissibili; se nessun \(k\) porta a una configurazione accettante, la macchina non accetta lungo nessuna delle diramazioni.
+\end{example}
+ 
+\subsection{Accettazione non deterministica tramite \(\diamond\)}
+ 
+Sia \(\mathrm{Acc} = \{c \in C \mid o_M(c) = 1\} \subseteq C\) l'insieme delle configurazioni accettanti. Una \textbf{computazione} da \(c\) è una sequenza finita \(c = c_0, c_1, \ldots, c_n\) con \(c_{k+1} \in \delta_M(c_k)\) per ogni \(k < n\); si dice che \(M\) \textbf{accetta} da \(c\) se esiste una computazione da \(c\) con \(c_n \in \mathrm{Acc}\).
+ 
+\begin{proposition}
+  \(M\) accetta da \(c\) se e solo se \(c \in \diamond\, \mathrm{Acc}\).
+\end{proposition}
+ 
+\begin{proof}
+  (\(\Leftarrow\)) Si mostra prima che \(\mathrm{Acc} \subseteq \diamond\, \mathrm{Acc}\): questo segue dalla proprietà generale \(P \subseteq \diamond P\), conseguenza immediata di \(\square Q \subseteq Q\) applicata a \(Q = \neg P\). Si mostra poi che, se \(c' \in \delta_M(c)\) e \(c' \in \diamond\,\mathrm{Acc}\), allora \(c \in \diamond\,\mathrm{Acc}\): infatti \(\square(\neg \mathrm{Acc})\) è esso stesso un invariante (essendo il massimo invariante contenuto in \(\neg \mathrm{Acc}\)), dunque \(c \in \square(\neg \mathrm{Acc})\) implica \(\delta_M(c) \subseteq \square(\neg \mathrm{Acc})\); per contrapposizione, se un successore \(c'\) non è in \(\square(\neg\mathrm{Acc}) = \neg\diamond\,\mathrm{Acc}\), allora nemmeno \(c\) lo è, cioè \(c \in \diamond\,\mathrm{Acc}\). Applicando questi due fatti a ritroso lungo una computazione accettante \(c_0, \ldots, c_n\) con \(c_n \in \mathrm{Acc} \subseteq \diamond\,\mathrm{Acc}\), si ottiene \(c_k \in \diamond\,\mathrm{Acc}\) per ogni \(k\), in particolare per \(k = 0\).
+ 
+  (\(\Rightarrow\)) Sia \(U = \{c \in C \mid \text{non esiste alcuna computazione accettante da } c\}\). Si ha \(U \subseteq C \setminus \mathrm{Acc}\), poiché una configurazione accettante ammette banalmente la computazione di lunghezza zero. Si mostra che \(U\) è un invariante: se \(c \in U\), allora per ogni \(c' \in \delta_M(c)\) non può esistere una computazione accettante da \(c'\) (altrimenti, componendola con il passo \(c \to c'\), si otterrebbe una computazione accettante da \(c\)), dunque \(\delta_M(c) \subseteq U\), cioè \(c \in \bigcirc_M U\). Per massimalità di \(\square\), \(U \subseteq \square(C \setminus \mathrm{Acc}) = \neg\diamond\,\mathrm{Acc}\), cioè \(\diamond\,\mathrm{Acc} \subseteq C \setminus U\): ogni configurazione in \(\diamond\,\mathrm{Acc}\) ammette una computazione accettante.
+\end{proof}
+ 
+Il linguaggio riconosciuto da \(M\) a partire da una configurazione iniziale \(c_0(w)\) codificante l'input \(w\) è dunque \(L(M) = \{w \mid c_0(w) \in \diamond\,\mathrm{Acc}\}\): la nozione usuale di linguaggio Turing-riconoscibile, in cui basta l'esistenza di \emph{una} diramazione accettante, è precisamente il predicato coalgebrico \(\diamond\,\mathrm{Acc}\).
+ 
+\subsection{Bisimulazione ed equivalenza di macchine}
+
+Un vantaggio della descrizione coalgebrica è che permette di dimostrare l'equivalenza tra due varianti di macchina di Turing (che differiscono, ad esempio, nella struttura del nastro) esibendo una bisimulazione tra le rispettive coalgebre delle configurazioni, invece di un argomento per induzione sul numero di passi di computazione. Il seguente lemma generale rende preciso il legame tra omomorfismi, bisimulazione e il predicato \(\diamond\).
+ 
+\begin{lemma}
+  Sia \(f : (X, \langle o, \delta \rangle) \to (Y, \langle o', \delta' \rangle)\) un omomorfismo di \(T\)-coalgebre tale che \(o = o' \circ f\), e sia \(\mathrm{Acc} = o^{-1}(1)\), \(\mathrm{Acc}' = o'^{-1}(1)\). Allora, per ogni \(x \in X\):
+  \[
+    x \in \diamond\, \mathrm{Acc} \iff f(x) \in \diamond\, \mathrm{Acc}'.
+  \]
+\end{lemma}
+ 
+\begin{proof}
+  Il grafico \(R = \{(x, f(x)) \mid x \in X\} \subseteq X \times Y\) è una bisimulazione tra \(\langle o, \delta \rangle\) e \(\langle o', \delta' \rangle\): la struttura di coalgebra su \(R\) è data trasportando \(\delta\) tramite la biiezione \(R \cong X\), e le due proiezioni \(\pi_1 : R \to X\) e \(\pi_2 : R \to Y\) sono omomorfismi, la seconda perché \(\pi_2 = f \circ \pi_1\) ed \(f\) è per ipotesi un omomorfismo.
+ 
+  Si mostra ora \(\Rightarrow\) (l'altra direzione è simmetrica, scambiando i ruoli di \(X\) e \(Y\) tramite la stessa relazione \(R\)). Sia \(U = \{x \in X \mid f(x) \notin \diamond\,\mathrm{Acc}'\}\). Si mostra che \(U\) è un invariante di \(\langle o, \delta\rangle\) contenuto in \(X \setminus \mathrm{Acc}\): se \(x \in U\), allora \(f(x) \in \square(\neg\mathrm{Acc}')\), che è un invariante, dunque \(\delta'(f(x)) \subseteq \square(\neg\mathrm{Acc}')\); per la condizione di omomorfismo \(f[\delta(x)] = \delta'(f(x))\), ogni \(x' \in \delta(x)\) soddisfa \(f(x') \in \square(\neg\mathrm{Acc}') \subseteq \neg\diamond\,\mathrm{Acc}'\), cioè \(x' \in U\); dunque \(\delta(x) \subseteq U\), cioè \(x \in \bigcirc_M U\). Inoltre \(U \subseteq X \setminus \mathrm{Acc}\), poiché \(o(x)=1\) implica \(o'(f(x))=1\), cioè \(f(x) \in \mathrm{Acc}' \subseteq \diamond\,\mathrm{Acc}'\), escludendo \(x \in U\). Per massimalità di \(\square\), \(U \subseteq \square(X \setminus \mathrm{Acc}) = \neg \diamond\,\mathrm{Acc}\): dunque \(x \notin \diamond\,\mathrm{Acc}\) implica \(f(x) \notin \diamond\,\mathrm{Acc}'\), che è la contrapposta della direzione cercata.
+\end{proof}
+ 
+Si applica ora il lemma a un caso concreto: l'equivalenza tra una macchina con nastro bi-infinito e una con nastro mono-infinito, ottenuta tramite la classica costruzione a due tracce.
+ 
+\begin{proposition}
+  Sia \(M\) una macchina con nastro bi-infinito, cioè con configurazioni \((q, \tau, i) \in Q \times \Gamma^{\mathbb{Z}} \times \mathbb{Z}\), e sia \(M'\) la macchina con nastro mono-infinito ottenuta dalla costruzione a due tracce: lo stato di \(M'\) è una coppia \((q, s) \in Q \times \{+,-\}\) che ricorda il segno della posizione corrente, il nastro di \(M'\) ha alfabeto \(\Gamma \times \Gamma\) e la cella \(n \in \mathbb{N}\) contiene la coppia \((\tau(n), \tau(-n-1))\), e la posizione della testina di \(M'\) è \(|i|\). Allora, per ogni configurazione \(c\) di \(M\), \(c \in \diamond\,\mathrm{Acc}\) se e solo se la configurazione corrispondente \(e(c)\) di \(M'\) soddisfa \(e(c) \in \diamond\,\mathrm{Acc}'\).
+\end{proposition}
+ 
+\begin{proof}
+  Si definisce \(e(q, \tau, i) = \bigl((q, \mathrm{sgn}(i)), \tau', |i|\bigr)\), dove \(\tau'(n) = (\tau(n), \tau(-n-1))\) per ogni \(n \in \mathbb{N}\), e si estende la funzione di transizione di \(M'\) in modo che un passo di \(M'\) legga la componente di \(\tau'(|i|)\) indicata dal segno corrente, applichi la transizione di \(M\), scriva sulla stessa componente, e aggiorni posizione e segno coerentemente con il nuovo valore di \(i \pm 1\) (incluso il cambio di segno quando \(i\) attraversa lo zero). Per costruzione, \(e\) è un omomorfismo di \(T\)-coalgebre: \(o_{M'}(e(c)) = o_M(c)\), poiché lo stato accettante di \(M'\) dipende solo dalla componente \(Q\), e \(\delta_{M'}(e(c)) = e[\delta_M(c)]\), poiché ogni passo di \(M\) corrisponde esattamente a un passo di \(M'\) sulla traccia appropriata, senza necessità di più passi intermedi. La tesi segue allora immediatamente dal lemma precedente.
+\end{proof}
+ 
+Il punto metodologico è che la correttezza della costruzione a due tracce, tradizionalmente dimostrata verificando per induzione sul numero di passi che le due macchine restano sincronizzate, si riduce alla verifica delle due condizioni di omomorfismo su \(e\), seguita dall'applicazione di un unico lemma generale sulla bisimulazione. Lo stesso schema si applica, con encoding diversi, alla simulazione di macchine multi-nastro, alla riduzione a un alfabeto binario, o a qualunque altra variante della macchina di Turing la cui equivalenza con quella standard sia dimostrata tramite una funzione di codifica delle configurazioni.

@@ -1,5 +1,5 @@
 \chapter{Teoria delle categorie}
-Tutto lo studio delle coalgebre nasce dai concetti fondamentali della teoria delle categorie, il cui oggetto fondamentale è dato dalle categorie.
+Tutto lo studio delle coalgebre nasce dai concetti fondamentali della teoria delle categorie \cite{jacobs2017}, il cui oggetto fondamentale è dato dalle categorie.
 
 \begin{definition}[Categoria]
   Una \textbf{categoria} \(\mathcal{C}\) consiste dei seguenti dati:
@@ -28,12 +28,12 @@ Le proprietà categoriche sono espresse in termini di morfismi, spesso rappresen
 \begin{description}
   \item[Commutatività:] Equazioni del tipo \(f_n \circ f_{n-1} \circ \cdots \circ f_2 \circ f_1 = g_m \circ g_{m-1} \circ \cdots \circ g_2 \circ g_1\) sono rappresentate da diagrammi come il seguente.
 
-    \[\begin{tikzcd}
-      & X_1 \arrow[r, "f_2"] & \cdots \arrow[r, "f_{n-1}"] & X_{n-1} \arrow[dr, "f_n"] & \\
-      A \arrow[ur, "f_1"] \arrow[dr, "g_1"'] & & & & B \\
-      & Y_1 \arrow[r, "g_2"'] & \cdots \arrow[r, "g_{m-1}"'] & Y_{m-1} \arrow[ur, "g_m"'] &
-    \end{tikzcd}\]
-  
+        \[\begin{tikzcd}
+            & X_1 \arrow[r, "f_2"] & \cdots \arrow[r, "f_{n-1}"] & X_{n-1} \arrow[dr, "f_n"] & \\
+            A \arrow[ur, "f_1"] \arrow[dr, "g_1"'] & & & & B \\
+            & Y_1 \arrow[r, "g_2"'] & \cdots \arrow[r, "g_{m-1}"'] & Y_{m-1} \arrow[ur, "g_m"'] &
+          \end{tikzcd}\]
+
   \item[Unicità: ] Una formulazione comune in teoria delle categorie è: per ogni elemento esiste un unico morfismo \(f: X \to Y\) che soddisfa una certa proprietà. Un morfismo di questo tipo è indicato nei diagrammi come \(f: X \dashrightarrow Y\).
 \end{description}
 
@@ -43,7 +43,7 @@ Un concetto derivato immediatamente dalla struttura categorica è quello di isom
   Un morfismo \(f: X \to Y\) in una categoria \(\mathcal{C}\) è un \textbf{isomorfismo} se esiste un morfismo \(g: Y \to X\) tale che \(g \circ f = \id_X\) e \(f \circ g = \id_Y\). In tal caso \(g\) è unico ed è detto \textit{inverso} di \(f\), scritto \(f^{-1}\), e si dice che \(X\) e \(Y\) sono \textit{isomorfi}, scritto \(X \cong Y\).
 \end{definition}
 
-Nella categoria \(\Set\) gli isomorfismi sono esattamente le funzioni biunivoche. La nozione di isomorfismo è fondamentale in tutta la teoria delle categorie e nel contesto delle coalgebre: la coalgebra finale è unica a meno di isomorfismo, e la sua struttura di transizione è essa stessa un isomorfismo.
+Nella categoria \(\Set\) gli isomorfismi sono esattamente le funzioni biunivoche. La nozione di isomorfismo è fondamentale in tutta la teoria delle categorie e nel contesto delle coalgebre: la coalgebra finale è unica a meno di isomorfismo, e la sua struttura di transizione è essa stessa un isomorfismo \cite{jacobs2017}.
 
 Un altro oggetto della teoria delle categorie fondamentale per lo studio delle coalgebre è dato dai funtori.
 
@@ -62,64 +62,93 @@ Inoltre, dati due funtori \(F: \mathcal{C} \to \mathcal{D}\) e \(G: \mathcal{D} 
 
 Un tipo di funtori particolarmente importante per lo studio delle coalgebre è dato dagli \textit{endofuntori}, cioè funtori \(F: \mathcal{C} \to \mathcal{C}\), che permettono di dare una definizione formale di coalgebra.
 
+\begin{definition}[Prodotto e coprodotto]
+  Dati due oggetti \(X, Y \in \mathcal{C}\):
+  \begin{enumerate}
+    \item Il \textbf{prodotto} \(X \times Y\) è un oggetto dotato di morfismi \(\pi_1 : X \times Y \to X\) e \(\pi_2 : X \times Y \to Y\), detti \textit{proiezioni}, tale che per ogni oggetto \(Z\) e morfismi \(f : Z \to X\) e \(g : Z \to Y\) esiste un unico morfismo \(\langle f, g \rangle : Z \to X \times Y\) con \(\pi_1 \circ \langle f, g \rangle = f\) e \(\pi_2 \circ \langle f, g \rangle = g\):
+          \[
+            \begin{tikzcd}[column sep=large]
+              & Z \arrow[dl, "f"'] \arrow[dr, "g"] \arrow[d, dashed, "\langle f{,}g \rangle"] & \\
+              X & X \times Y \arrow[l, "\pi_1"] \arrow[r, "\pi_2"'] & Y
+            \end{tikzcd}
+          \]
+    \item Il \textbf{coprodotto} \(X + Y\) è un oggetto dotato di morfismi \(\kappa_1 : X \to X + Y\) e \(\kappa_2 : Y \to X + Y\), detti \textit{coproiezioni} o \textit{inclusioni}, tale che per ogni oggetto \(Z\) e morfismi \(f : X \to Z\) e \(g : Y \to Z\) esiste un unico morfismo \([f, g] : X + Y \to Z\) con \([f, g] \circ \kappa_1 = f\) e \([f, g] \circ \kappa_2 = g\):
+          \[
+            \begin{tikzcd}[column sep=large]
+              X \arrow[r, "\kappa_1"] \arrow[dr, "f"'] & X + Y \arrow[d, dashed, "{[f,g]}"] & Y \arrow[l, "\kappa_2"'] \arrow[dl, "g"] \\
+              & Z &
+            \end{tikzcd}
+          \]
+  \end{enumerate}
+\end{definition}
+
+Nella categoria \(\Set\) il prodotto è il prodotto cartesiano \(X \times Y = \{(x, y) \mid x \in X, y \in Y\}\) con le proiezioni usuali, e il coprodotto è l'unione disgiunta \(X + Y\). Entrambe le costruzioni si estendono ai morfismi: date \(f : X \to X'\) e \(g : Y \to Y'\), si definiscono \(f \times g : X \times Y \to X' \times Y'\) tramite \((x, y) \mapsto (f(x), g(y))\) e \(f + g : X + Y \to X' + Y'\) tramite le coproiezioni. Questo rende prodotto e coprodotto funtoriali \cite{jacobs2017}.
+
 Infine, una nozione categorica centrale nello studio delle coalgebre è quella di oggetto finale.
 
 \begin{definition}[Oggetto finale]
   Un \textbf{oggetto finale} in una categoria \(\mathcal{C}\) è un oggetto \(\mathbf{1} \in \mathcal{C}\) tale che per ogni oggetto \(X \in \mathcal{C}\) esiste un unico morfismo \(!_X : X \to \mathbf{1}\).
 \end{definition}
 
-% Una proprietà importante degli oggetti finali è che sono unici a meno di un isomorfismo unico.
-% \begin{proposition}
-%   Se \(\mathbf{1}\) e \(\mathbf{1'}\) sono oggetti finali in una categoria \(\mathcal{C}\), allora esiste un isomorfismo unico \(!: \mathbf{1} \to \mathbf{1'}\) tra essi. 
-% \end{proposition}
-% \begin{proof}
-%   Per la proprietà di oggetto finale, esistono morfismi unici \(!_{\mathbf{1}}: \mathbf{1} \to \mathbf{1'}\) e \(!_{\mathbf{1'}}: \mathbf{1'} \to \mathbf{1}\), che rendono il seguente diagramma commutativo
-
-%   \[\begin{tikzcd}
-%     {\mathbf{1}} && {\mathbf{1'}} && {\mathbf{1}} \\
-%     \\
-%     && {\mathbf{1}} && {\mathbf{1'}}
-%     \arrow["{!_{\mathbf{1}}}", from=1-1, to=1-3]
-%     \arrow["{\id_{\mathbf{1}}}"', from=1-1, to=3-3]
-%     \arrow["{!_{\mathbf{1'}}}", from=1-3, to=1-5]
-%     \arrow["{!_{\mathbf{1'}}}", from=1-3, to=3-3]
-%     \arrow["{\id_{\mathbf{1'}}}", from=1-3, to=3-5]
-%     \arrow["{!_{\mathbf{1}}}", from=1-5, to=3-5]
-%   \end{tikzcd}\]
-%   Si nota quindi che \(!_{\mathbf{1'}} \circ !_{\mathbf{1}} = \id_{\mathbf{1}}\) e \(!_{\mathbf{1}} \circ !_{\mathbf{1'}} = \id_{\mathbf{1'}}\), cioè che \(!_{\mathbf{1}}^{-1} = !_{\mathbf{1'}}\) e che \(\mathbf{1} \cong \mathbf{1'}\).
-% \end{proof}
+Una proprietà importante degli oggetti finali è che sono unici a meno di un isomorfismo unico.
 
 \begin{proposition}
-  Se $\mathbf{1}$ e $\mathbf{1'}$ sono oggetti finali in una categoria $\mathcal{C}$, allora esiste un isomorfismo unico $!: \mathbf{1} \to \mathbf{1'}$ tra essi. 
+  Se \(\mathbf{1}\) e \(\mathbf{1'}\) sono oggetti finali in una categoria \(\mathcal{C}\), allora esiste un isomorfismo unico \(!: \mathbf{1} \to \mathbf{1'}\) tra essi.
 \end{proposition}
 
 \begin{proof}
-  Per la proprietà di oggetto finale, esistono morfismi unici $!: \mathbf{1} \to \mathbf{1'}$ e $!': \mathbf{1'} \to \mathbf{1}$. 
+  Per la proprietà di oggetto finale, esistono morfismi unici \(!: \mathbf{1} \to \mathbf{1'}\) e \(!': \mathbf{1'} \to \mathbf{1}\).
   Considerando le loro composizioni, si costruiscono i seguenti diagrammi:
 
   \[
-  \begin{tikzcd}
-    \mathbf{1} \arrow[r, "!", shift left] & \mathbf{1'} \arrow[l, "!'", shift left]
-  \end{tikzcd}
-  \quad \implies \quad
-  \begin{tikzcd}
-    \mathbf{1} \arrow[r, "!", bend left] \arrow[d, "\id_{\mathbf{1}}"', equal] & \mathbf{1'} \arrow[l, "!'", bend left] \\
-    \mathbf{1} & 
-  \end{tikzcd}
-  \text{ e }
-  \begin{tikzcd}
-    \mathbf{1'} \arrow[r, "!'", bend left] \arrow[d, "\id_{\mathbf{1'}}"', equal] & \mathbf{1} \arrow[l, "!", bend left] \\
-    \mathbf{1'} & 
-  \end{tikzcd}
+    \begin{tikzcd}
+      \mathbf{1} \arrow[r, "!", shift left] & \mathbf{1'} \arrow[l, "!'", shift left]
+    \end{tikzcd}
+    \quad \implies \quad
+    \begin{tikzcd}
+      \mathbf{1} \arrow[r, "!", bend left] \arrow[d, "\id_{\mathbf{1}}"', equal] & \mathbf{1'} \arrow[l, "!'", bend left] \\
+      \mathbf{1} &
+    \end{tikzcd}
+    \text{ e }
+    \begin{tikzcd}
+      \mathbf{1'} \arrow[r, "!'", bend left] \arrow[d, "\id_{\mathbf{1'}}"', equal] & \mathbf{1} \arrow[l, "!", bend left] \\
+      \mathbf{1'} &
+    \end{tikzcd}
   \]
 
   Poiché il morfismo da un oggetto finale a se stesso è unico, la composizione dei due morfismi coincide con l'identità dell'oggetto di partenza:
   \[
-  !' \circ ! = \id_{\mathbf{1}} \quad \text{e} \quad ! \circ !' = \id_{\mathbf{1'}}
+    !' \circ ! = \id_{\mathbf{1}} \quad \text{e} \quad ! \circ !' = \id_{\mathbf{1'}}
   \]
-  Questo dimostra che $!$ è un isomorfismo (con inverso $!'$), e l'unicità è garantita dalla definizione di oggetto finale.
+  Questo dimostra che \(!\) è un isomorfismo (con inverso \(!'\)), e l'unicità è garantita dalla definizione di oggetto finale.
 \end{proof}
 
 \begin{example}
   Nella categoria \(\Set\) qualunque insieme con un solo elemento è un oggetto finale: si sceglie canonicamente \(\mathbf{1} = \{*\}\).
 \end{example}
+
+\begin{definition}[Relazione]
+
+  Dati due oggetti \(X, Y \in \mathcal{C}\), una \textbf{relazione} \(R\) tra \(X\) e \(Y\) è un oggetto \(R \in \mathcal{C}\) dotato di un morfismo \(\langle \pi_1, \pi_2 \rangle : R \to X \times Y\) le cui componenti \(\pi_1 : R \to X\) e \(\pi_2 : R \to Y\) sono dette \textit{proiezioni} della relazione. Si scrive \(R \subseteq X \times Y\) per indicare che \(R\), tramite \(\langle \pi_1, \pi_2 \rangle\), individua un sottoinsieme del prodotto \(X \times Y\).
+
+\end{definition}
+
+
+
+Nella categoria \(\Set\) questa definizione coincide con la nozione insiemistica usuale: una relazione \(R \subseteq X \times Y\) è un sottoinsieme del prodotto cartesiano, le cui proiezioni \(\pi_1 : R \to X\) e \(\pi_2 : R \to Y\) sono le restrizioni a \(R\) delle proiezioni di \(X \times Y\). Dato \(r = (x, y) \in R\), si scrive equivalentemente \(x \mathrel{R} y\). Questa nozione di relazione, formulata a livello di una categoria arbitraria, è quella che permetterà di definire in modo generale le bisimulazioni tra coalgebre \cite{jacobs2017,rutten2000}.
+
+\begin{definition}[Esponenziale]
+  Dati due oggetti \(X, Y \in \mathcal{C}\), l'\textbf{esponenziale} \(Y^X\) è un oggetto dotato di un morfismo di valutazione \(\mathrm{ev} : Y^X \times X \to Y\) tale che per ogni oggetto \(Z\) e ogni morfismo \(g : Z \times X \to Y\) esiste un unico morfismo \(\lambda(g) : Z \to Y^X\) che rende commutativo il seguente diagramma:
+  \[
+    \begin{tikzcd}[column sep=large]
+      Z \times X \arrow[dr, "g"'] \arrow[r, dashed, "\lambda(g) \times \id_X"] & Y^X \times X \arrow[d, "\mathrm{ev}"] \\
+      & Y
+    \end{tikzcd}
+  \]
+\end{definition}
+
+Nella categoria \(\Set\) l'esponenziale \(Y^X\) è l'insieme di tutte le funzioni totali da \(X\) a \(Y\), e il morfismo di valutazione è \(\mathrm{ev}(\varphi, x) = \varphi(x)\). La corrispondenza tra un morfismo \(g : Z \times X \to Y\) e la sua \textit{curryficazione} \(\lambda(g) : Z \to Y^X\), definita da \(\lambda(g)(z)(x) = g(z, x)\), è la nota corrispondenza biunivoca:
+\[
+  \frac{Z \times X \to Y}{Z \to Y^X}.
+\]
+Questa costruzione permette di rappresentare una funzione di transizione con più argomenti, come \(t : X \times A \to X\), tramite la sua forma currificata \(t : X \to X^A\), dove \(t(x)(a) \in X\) è lo stato raggiunto da \(x\) leggendo il simbolo \(a\). È in questa forma che le funzioni di transizione degli automi vengono espresse come componenti di una coalgebra \cite{jacobs2017}.
